@@ -4,6 +4,7 @@ const {
   signin,
   logout,
   getCurrentUser,
+  verifyEmail,
 } = require("../controllers/authController");
 const authMiddleware = require("../middleware/authMiddleware");
 
@@ -13,5 +14,6 @@ router.post("/signup", signup);
 router.post("/signin", signin);
 router.post("/logout", logout);
 router.get("/me", authMiddleware, getCurrentUser);
+router.get("/verify-email", verifyEmail);
 
 module.exports = router;

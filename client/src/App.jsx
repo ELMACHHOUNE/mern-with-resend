@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import AuthPage from "./pages/auth/AuthPage";
+import VerifyEmail from "./pages/auth/VerifyEmail";
 import HomePage from "./pages/home/HomePage";
 
 const hasToken = () => Boolean(localStorage.getItem("auth_token"));
@@ -12,6 +13,7 @@ export default function App() {
         element={<Navigate to={hasToken() ? "/home" : "/auth"} replace />}
       />
       <Route path="/auth" element={<AuthPage />} />
+      <Route path="/verify-email" element={<VerifyEmail />} />
       <Route path="/home" element={<HomePage />} />
       <Route
         path="*"

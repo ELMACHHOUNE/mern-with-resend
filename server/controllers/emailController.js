@@ -12,7 +12,7 @@ const sendEmail = async (req, res) => {
   }
 
   const { data, error } = await resend.emails.send({
-    from: "Acme <onboarding@resend.dev>",
+    from: "Admin <admin@3d-maghribi.com>",
     to: Array.isArray(to) ? to : [to],
     subject,
     ...(html && { html }),

@@ -69,17 +69,20 @@ export default function AuthPage() {
         password: formData.password,
       };
 
-      const data =
-        mode === "signup"
-          ? await signup({ ...payload, name: formData.name })
-          : await signin(payload);
-
-      localStorage.setItem(TOKEN_KEY, data.token);
-      setToken(data.token);
-      setUser(data.user);
-      setStatus(data.message);
-      setFormData({ name: "", email: "", password: "" });
-      navigate("/home", { replace: true });
+      if (mode === "signup") {
+        const data = await signup({ ...payload, name: formData.name });
+        setStatus(data.message);
+        setFormData({ name: "", email: "", password: "" });
+        setMode("verification-sent");
+      } else {
+        const data = await signin(payload);
+        localStorage.setItem(TOKEN_KEY, data.token);
+        setToken(data.token);
+        setUser(data.user);
+        setStatus(data.message);
+        setFormData({ name: "", email: "", password: "" });
+        navigate("/home", { replace: true });
+      }
     } catch (err) {
       setError(err.message || "Authentication failed");
       setStatus("Ready");
@@ -141,6 +144,36 @@ export default function AuthPage() {
               className="mt-6 w-full rounded-2xl bg-slate-900 px-4 py-3.5 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-70"
             >
               {loading ? "Logging out..." : "Logout"}
+            </button>
+          </div>
+        </section>
+      </main>
+    );
+  }
+
+  if (mode === "verification-sent") {
+    return (
+      <main className="min-h-screen bg-linear-to-br from-slate-100 via-white to-indigo-100 p-4 sm:p-6">
+        <section className="mx-auto grid min-h-[calc(100vh-2rem)] max-w-6xl gap-6 rounded-4xl border border-white/70 bg-white/80 p-4 shadow-[0_30px_90px_rgba(15,23,42,0.08)] backdrop-blur-sm sm:min-h-[calc(100vh-3rem)] sm:grid-cols-[1.1fr_0.9fr] sm:p-6">
+          <AuthIllustration />
+
+          <div className="rounded-[2rem] bg-white p-6 text-center shadow-[0_30px_90px_rgba(15,23,42,0.12)] sm:p-8">
+            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-indigo-100 text-2xl text-indigo-600">
+              ✉
+            </div>
+            <h1 className="text-xl font-semibold text-slate-900">
+              Check your email
+            </h1>
+            <p className="mt-2 text-sm text-slate-500">
+              We sent a verification link to <strong>{formData.email}</strong>.
+              Click the link to activate your account.
+            </p>
+            <button
+              type="button"
+              onClick={() => setMode("signin")}
+              className="mt-6 w-full rounded-2xl bg-indigo-600 px-4 py-3.5 text-sm font-semibold text-white transition hover:bg-indigo-500"
+            >
+              Go to sign in
             </button>
           </div>
         </section>
