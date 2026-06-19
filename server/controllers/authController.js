@@ -47,18 +47,23 @@ const signup = async (req, res) => {
     const verifyUrl = `${process.env.CLIENT_URL}/verify-email?token=${verificationToken}`;
 
     const { error } = await resend.emails.send({
-      from: "Admin <admin@gotodev.ma>",
+      from: "Admin <admin@3d-maghribi.com>",
       to: normalizedEmail,
       subject: "Verify your email address",
       html: `<p>Hi ${name.trim()},</p><p>Click <a href="${verifyUrl}">here</a> to verify your email address.</p><p>Or paste this link in your browser:</p><p>${verifyUrl}</p>`,
     });
 
     if (error) {
-      return res.status(400).json({ error });
+      return res
+        .status(400)
+        .json({
+          message: error.message || "Failed to send verification email",
+        });
     }
 
     return res.status(201).json({
-      message: "Account created. Please check your email to verify your account.",
+      message:
+        "Account created. Please check your email to verify your account.",
     });
   } catch {
     return res.status(500).json({ message: "Server error" });
@@ -76,14 +81,18 @@ const verifyEmail = async (req, res) => {
     const user = await User.findOne({ verificationToken: token });
 
     if (!user) {
-      return res.status(400).json({ message: "Invalid or expired verification token" });
+      return res
+        .status(400)
+        .json({ message: "Invalid or expired verification token" });
     }
 
     user.isVerified = true;
     user.verificationToken = null;
     await user.save();
 
-    return res.status(200).json({ message: "Email verified successfully. You can now sign in." });
+    return res
+      .status(200)
+      .json({ message: "Email verified successfully. You can now sign in." });
   } catch {
     return res.status(500).json({ message: "Server error" });
   }
@@ -106,7 +115,9 @@ const signin = async (req, res) => {
     }
 
     if (!user.isVerified) {
-      return res.status(403).json({ message: "Please verify your email before signing in" });
+      return res
+        .status(403)
+        .json({ message: "Please verify your email before signing in" });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
