@@ -143,6 +143,121 @@ const signin = async (req, res) => {
   }
 };
 
+const resendCode = async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ message: "Email is required" });
+  }
+
+  const normalizedEmail = email.toLowerCase().trim();
+
+  try {
+    const user = await User.findOne({ email: normalizedEmail });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (user.isVerified) {
+      return res.status(400).json({ message: "Email is already verified" });
+    }
+
+    const verificationCode = crypto.randomInt(100000, 999999).toString();
+    user.verificationToken = verificationCode;
+    await user.save();
+
+    const { error } = await resend.emails.send({
+      from: "Admin <admin@3d-maghribi.com>",
+      to: normalizedEmail,
+      subject: "Your new verification code",
+      html: `<p>Your new verification code is:</p><h2 style="font-size:32px;letter-spacing:8px;text-align:center;color:#4f46e5;">${verificationCode}</h2>`,
+    });
+
+    if (error) {
+      return res.status(400).json({ message: error.message || "Failed to send code" });
+    }
+
+    return res.status(200).json({ message: "New verification code sent to your email" });
+  } catch {
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
+const forgotPassword = async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ message: "Email is required" });
+  }
+
+  const normalizedEmail = email.toLowerCase().trim();
+
+  try {
+    const user = await User.findOne({ email: normalizedEmail });
+
+    if (!user) {
+      return res.status(404).json({ message: "No account found with this email" });
+    }
+
+    const resetCode = crypto.randomInt(100000, 999999).toString();
+    user.resetToken = resetCode;
+    user.resetTokenExpiry = new Date(Date.now() + 15 * 60 * 1000);
+    await user.save();
+
+    const { error } = await resend.emails.send({
+      from: "Admin <admin@3d-maghribi.com>",
+      to: normalizedEmail,
+      subject: "Password reset code",
+      html: `<p>Your password reset code is:</p><h2 style="font-size:32px;letter-spacing:8px;text-align:center;color:#4f46e5;">${resetCode}</h2><p>This code expires in 15 minutes.</p>`,
+    });
+
+    if (error) {
+      return res.status(400).json({ message: error.message || "Failed to send reset code" });
+    }
+
+    return res.status(200).json({ message: "Reset code sent to your email" });
+  } catch {
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
+const resetPassword = async (req, res) => {
+  const { email, code, password } = req.body;
+
+  if (!email || !code || !password) {
+    return res.status(400).json({ message: "Email, code, and new password are required" });
+  }
+
+  if (password.length < 6) {
+    return res.status(400).json({ message: "Password must be at least 6 characters" });
+  }
+
+  const normalizedEmail = email.toLowerCase().trim();
+
+  try {
+    const user = await User.findOne({
+      email: normalizedEmail,
+      resetToken: code,
+      resetTokenExpiry: { $gt: new Date() },
+    });
+
+    if (!user) {
+      return res.status(400).json({ message: "Invalid or expired reset code" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    user.password = hashedPassword;
+    user.resetToken = null;
+    user.resetTokenExpiry = null;
+    await user.save();
+
+    return res.status(200).json({ message: "Password reset successfully. You can now sign in." });
+  } catch {
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
 const logout = (req, res) => {
   return res.status(200).json({ message: "Logged out successfully" });
 };
@@ -157,4 +272,7 @@ module.exports = {
   logout,
   getCurrentUser,
   verifyEmail,
+  resendCode,
+  forgotPassword,
+  resetPassword,
 };

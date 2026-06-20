@@ -49,6 +49,27 @@ export const verifyEmail = (email, code) => {
   });
 };
 
+export const resendCode = (email) => {
+  return request("/api/auth/resend-code", {
+    method: "POST",
+    body: JSON.stringify({ email }),
+  });
+};
+
+export const forgotPassword = (email) => {
+  return request("/api/auth/forgot-password", {
+    method: "POST",
+    body: JSON.stringify({ email }),
+  });
+};
+
+export const resetPassword = (email, code, password) => {
+  return request("/api/auth/reset-password", {
+    method: "POST",
+    body: JSON.stringify({ email, code, password }),
+  });
+};
+
 export const getCurrentUser = (token) => {
   return request("/api/auth/me", {
     method: "GET",

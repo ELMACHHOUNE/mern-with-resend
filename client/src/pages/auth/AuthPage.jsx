@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthForm from "../../components/auth/AuthForm";
 import AuthIllustration from "../../components/auth/AuthIllustration";
-import { getCurrentUser, logout, signin, signup, verifyEmail } from "../../api/auth";
+import { getCurrentUser, logout, signin, signup, verifyEmail, resendCode, forgotPassword, resetPassword } from "../../api/auth";
 
 const TOKEN_KEY = "auth_token";
 
@@ -105,6 +105,60 @@ export default function AuthPage() {
       setMode("verified");
     } catch (err) {
       setError(err.message || "Verification failed");
+      setStatus("Ready");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const onResendCode = async () => {
+    setError("");
+    setStatus("Sending...");
+    setLoading(true);
+
+    try {
+      const data = await resendCode(formData.email);
+      setStatus(data.message);
+    } catch (err) {
+      setError(err.message || "Failed to resend code");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const onForgotPassword = async (event) => {
+    event.preventDefault();
+    setError("");
+    setStatus("Sending...");
+    setLoading(true);
+
+    try {
+      const data = await forgotPassword(formData.email);
+      setStatus(data.message);
+      setFormData({ password: "" });
+      setMode("reset-code");
+    } catch (err) {
+      setError(err.message || "Failed to send reset code");
+      setStatus("Ready");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const onResetPassword = async (event) => {
+    event.preventDefault();
+    setError("");
+    setStatus("Resetting...");
+    setLoading(true);
+
+    try {
+      const data = await resetPassword(formData.email, verificationCode, formData.password);
+      setStatus(data.message);
+      setVerificationCode("");
+      setFormData({ name: "", email: "", password: "" });
+      setMode("password-reset");
+    } catch (err) {
+      setError(err.message || "Failed to reset password");
       setStatus("Ready");
     } finally {
       setLoading(false);
@@ -242,13 +296,169 @@ export default function AuthPage() {
 
                 <button
                   type="button"
+                  onClick={onResendCode}
+                  disabled={loading}
+                  className="mt-4 text-sm text-indigo-600 hover:text-indigo-500 disabled:opacity-50"
+                >
+                  {loading ? "Sending..." : "Resend code"}
+                </button>
+
+                <button
+                  type="button"
                   onClick={() => setMode("signin")}
-                  className="mt-4 text-sm text-slate-500 hover:text-indigo-600"
+                  className="mt-2 text-sm text-slate-500 hover:text-indigo-600"
                 >
                   Back to sign in
                 </button>
               </>
             )}
+          </div>
+        </section>
+      </main>
+    );
+  }
+
+  if (mode === "forgot-password") {
+    return (
+      <main className="min-h-screen bg-linear-to-br from-slate-100 via-white to-indigo-100 p-4 sm:p-6">
+        <section className="mx-auto grid min-h-[calc(100vh-2rem)] max-w-6xl gap-6 rounded-4xl border border-white/70 bg-white/80 p-4 shadow-[0_30px_90px_rgba(15,23,42,0.08)] backdrop-blur-sm sm:min-h-[calc(100vh-3rem)] sm:grid-cols-[1.1fr_0.9fr] sm:p-6">
+          <AuthIllustration />
+
+          <div className="rounded-[2rem] bg-white p-6 shadow-[0_30px_90px_rgba(15,23,42,0.12)] sm:p-8">
+            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-indigo-100 text-2xl text-indigo-600">
+              ?
+            </div>
+            <h1 className="text-xl font-semibold text-slate-900">Forgot password</h1>
+            <p className="mt-2 text-sm text-slate-500">
+              Enter your email and we'll send you a reset code.
+            </p>
+
+            <form onSubmit={onForgotPassword} className="mt-6 space-y-4">
+              <input
+                type="email"
+                placeholder="your@email.com"
+                value={formData.email}
+                onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
+                className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-300 focus:bg-white"
+                required
+              />
+
+              {error ? (
+                <p className="rounded-2xl border border-rose-100 bg-rose-50 px-4 py-3 text-sm text-rose-600">{error}</p>
+              ) : null}
+
+              <button
+                type="submit"
+                disabled={loading || !formData.email}
+                className="w-full rounded-2xl bg-indigo-600 px-4 py-3.5 text-sm font-semibold text-white shadow-[0_18px_40px_rgba(79,70,229,0.22)] transition hover:bg-indigo-500 disabled:cursor-not-allowed disabled:opacity-70"
+              >
+                {loading ? "Sending..." : "Send reset code"}
+              </button>
+            </form>
+
+            <button
+              type="button"
+              onClick={() => setMode("signin")}
+              className="mt-4 text-sm text-slate-500 hover:text-indigo-600"
+            >
+              Back to sign in
+            </button>
+          </div>
+        </section>
+      </main>
+    );
+  }
+
+  if (mode === "reset-code") {
+    return (
+      <main className="min-h-screen bg-linear-to-br from-slate-100 via-white to-indigo-100 p-4 sm:p-6">
+        <section className="mx-auto grid min-h-[calc(100vh-2rem)] max-w-6xl gap-6 rounded-4xl border border-white/70 bg-white/80 p-4 shadow-[0_30px_90px_rgba(15,23,42,0.08)] backdrop-blur-sm sm:min-h-[calc(100vh-3rem)] sm:grid-cols-[1.1fr_0.9fr] sm:p-6">
+          <AuthIllustration />
+
+          <div className="rounded-[2rem] bg-white p-6 shadow-[0_30px_90px_rgba(15,23,42,0.12)] sm:p-8">
+            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-indigo-100 text-2xl text-indigo-600">
+              ✉
+            </div>
+            <h1 className="text-xl font-semibold text-slate-900">Reset code sent</h1>
+            <p className="mt-2 text-sm text-slate-500">
+              Enter the code from your email and your new password.
+            </p>
+
+            <form onSubmit={onResetPassword} className="mt-6 space-y-4">
+              <input
+                type="email"
+                placeholder="your@email.com"
+                value={formData.email}
+                onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
+                className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-300 focus:bg-white"
+                required
+              />
+              <input
+                type="text"
+                inputMode="numeric"
+                maxLength={6}
+                placeholder="000000"
+                value={verificationCode}
+                onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-center text-2xl tracking-[8px] text-slate-900 outline-none transition placeholder:text-slate-300 focus:border-indigo-300 focus:bg-white"
+                required
+              />
+              <input
+                type="password"
+                name="password"
+                placeholder="New password"
+                value={formData.password}
+                onChange={onInputChange}
+                className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-300 focus:bg-white"
+                required
+                minLength={6}
+              />
+
+              {error ? (
+                <p className="rounded-2xl border border-rose-100 bg-rose-50 px-4 py-3 text-sm text-rose-600">{error}</p>
+              ) : null}
+
+              <button
+                type="submit"
+                disabled={loading || !formData.email || verificationCode.length < 6 || !formData.password}
+                className="w-full rounded-2xl bg-indigo-600 px-4 py-3.5 text-sm font-semibold text-white shadow-[0_18px_40px_rgba(79,70,229,0.22)] transition hover:bg-indigo-500 disabled:cursor-not-allowed disabled:opacity-70"
+              >
+                {loading ? "Resetting..." : "Reset password"}
+              </button>
+            </form>
+
+            <button
+              type="button"
+              onClick={() => setMode("signin")}
+              className="mt-4 text-sm text-slate-500 hover:text-indigo-600"
+            >
+              Back to sign in
+            </button>
+          </div>
+        </section>
+      </main>
+    );
+  }
+
+  if (mode === "password-reset") {
+    return (
+      <main className="min-h-screen bg-linear-to-br from-slate-100 via-white to-indigo-100 p-4 sm:p-6">
+        <section className="mx-auto grid min-h-[calc(100vh-2rem)] max-w-6xl gap-6 rounded-4xl border border-white/70 bg-white/80 p-4 shadow-[0_30px_90px_rgba(15,23,42,0.08)] backdrop-blur-sm sm:min-h-[calc(100vh-3rem)] sm:grid-cols-[1.1fr_0.9fr] sm:p-6">
+          <AuthIllustration />
+
+          <div className="rounded-[2rem] bg-white p-6 text-center shadow-[0_30px_90px_rgba(15,23,42,0.12)] sm:p-8">
+            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 text-2xl text-emerald-600">
+              ✓
+            </div>
+            <h1 className="text-xl font-semibold text-slate-900">Password reset!</h1>
+            <p className="mt-2 text-sm text-slate-500">{status}</p>
+            <button
+              type="button"
+              onClick={() => setMode("signin")}
+              className="mt-6 w-full rounded-2xl bg-indigo-600 px-4 py-3.5 text-sm font-semibold text-white transition hover:bg-indigo-500"
+            >
+              Go to sign in
+            </button>
           </div>
         </section>
       </main>

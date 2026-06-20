@@ -130,6 +130,16 @@ export default function AuthForm({
         >
           {loading ? "Please wait..." : isSignup ? "Sign up" : "Sign in"}
         </button>
+
+        {!isSignup && (
+          <button
+            type="button"
+            onClick={() => onModeChange("forgot-password")}
+            className="mt-2 w-full text-center text-sm text-slate-500 hover:text-indigo-600"
+          >
+            Forgot password?
+          </button>
+        )}
       </form>
 
       <div className="mt-6 text-center text-sm text-slate-500">
