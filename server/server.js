@@ -47,22 +47,30 @@ app.use("/api/auth", authRoutes);
 app.use("/api/email", emailRoutes);
 app.use(inboundRoutes);
 
-const startServer = async () => {
-  try {
-    if (!jwtSecret) {
-      throw new Error("JWT_SECRET is missing in .env");
+if (!process.env.VERCEL) {
+  const startServer = async () => {
+    try {
+      if (!jwtSecret) {
+        throw new Error("JWT_SECRET is missing in .env");
+      }
+
+      await mongoose.connect(mongoUri);
+      console.log("MongoDB connected");
+
+      app.listen(port, () => {
+        console.log(`Server listening on port ${port}`);
+      });
+    } catch (error) {
+      console.error("Failed to connect to MongoDB:", error.message);
+      process.exit(1);
     }
+  };
 
-    await mongoose.connect(mongoUri);
-    console.log("MongoDB connected");
+  startServer();
+}
 
-    app.listen(port, () => {
-      console.log(`Server listening on port ${port}`);
-    });
-  } catch (error) {
-    console.error("Failed to connect to MongoDB:", error.message);
-    process.exit(1);
-  }
-};
+mongoose.connect(mongoUri).catch((err) => {
+  console.error("MongoDB connection error:", err.message);
+});
 
-startServer();
+module.exports = app;
