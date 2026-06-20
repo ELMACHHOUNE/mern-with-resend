@@ -202,11 +202,18 @@ export default function AuthPage() {
                   Check your email
                 </h1>
                 <p className="mt-2 text-sm text-slate-500">
-                  We sent a 6-digit code to <strong>{formData.email}</strong>.
-                  Enter it below to activate your account.
+                  Enter the email and the 6-digit code we sent to activate your account.
                 </p>
 
                 <form onSubmit={onVerifyCode} className="mt-6 space-y-4">
+                  <input
+                    type="email"
+                    placeholder="your@email.com"
+                    value={formData.email}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
+                    className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-300 focus:bg-white"
+                    required
+                  />
                   <input
                     type="text"
                     inputMode="numeric"
@@ -226,7 +233,7 @@ export default function AuthPage() {
 
                   <button
                     type="submit"
-                    disabled={loading || verificationCode.length < 6}
+                    disabled={loading || !formData.email || verificationCode.length < 6}
                     className="w-full rounded-2xl bg-indigo-600 px-4 py-3.5 text-sm font-semibold text-white shadow-[0_18px_40px_rgba(79,70,229,0.22)] transition hover:bg-indigo-500 disabled:cursor-not-allowed disabled:opacity-70"
                   >
                     {loading ? "Verifying..." : "Verify email"}
