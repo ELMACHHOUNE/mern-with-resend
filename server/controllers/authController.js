@@ -6,6 +6,17 @@ const User = require("../models/User");
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+const logoUrl = `${process.env.CLIENT_URL}/logo.png`;
+
+const emailLayout = (content) => `
+  <div style="max-width:480px;margin:0 auto;font-family:Arial,sans-serif;">
+    <div style="text-align:center;padding:20px 0;">
+      <img src="${logoUrl}" alt="Logo" style="max-width:150px;height:auto;" />
+    </div>
+    ${content}
+  </div>
+`;
+
 const buildToken = (userId) => {
   return jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: "7d" });
 };
@@ -48,7 +59,7 @@ const signup = async (req, res) => {
       from: "Admin <admin@3d-maghribi.com>",
       to: normalizedEmail,
       subject: "Your verification code",
-      html: `<p>Hi ${name.trim()},</p><p>Your verification code is:</p><h2 style="font-size:32px;letter-spacing:8px;text-align:center;color:#4f46e5;">${verificationCode}</h2><p>Enter this code on the verification page to activate your account.</p>`,
+      html: emailLayout(`<p>Hi ${name.trim()},</p><p>Your verification code is:</p><h2 style="font-size:32px;letter-spacing:8px;text-align:center;color:#4f46e5;">${verificationCode}</h2><p>Enter this code on the verification page to activate your account.</p>`),
     });
 
     if (error) {
@@ -171,7 +182,7 @@ const resendCode = async (req, res) => {
       from: "Admin <admin@3d-maghribi.com>",
       to: normalizedEmail,
       subject: "Your new verification code",
-      html: `<p>Your new verification code is:</p><h2 style="font-size:32px;letter-spacing:8px;text-align:center;color:#4f46e5;">${verificationCode}</h2>`,
+      html: emailLayout(`<p>Your new verification code is:</p><h2 style="font-size:32px;letter-spacing:8px;text-align:center;color:#4f46e5;">${verificationCode}</h2>`),
     });
 
     if (error) {
@@ -209,7 +220,7 @@ const forgotPassword = async (req, res) => {
       from: "Admin <admin@3d-maghribi.com>",
       to: normalizedEmail,
       subject: "Password reset code",
-      html: `<p>Your password reset code is:</p><h2 style="font-size:32px;letter-spacing:8px;text-align:center;color:#4f46e5;">${resetCode}</h2><p>This code expires in 15 minutes.</p>`,
+      html: emailLayout(`<p>Your password reset code is:</p><h2 style="font-size:32px;letter-spacing:8px;text-align:center;color:#4f46e5;">${resetCode}</h2><p>This code expires in 15 minutes.</p>`),
     });
 
     if (error) {
