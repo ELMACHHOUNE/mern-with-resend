@@ -73,7 +73,7 @@ export default function AuthPage() {
       if (mode === "signup") {
         const data = await signup({ ...payload, name: formData.name });
         setStatus(data.message);
-        setFormData({ name: "", email: "", password: "" });
+        setFormData({ name: "", password: "" });
         setMode("verification-sent");
       } else {
         const data = await signin(payload);
