@@ -42,9 +42,10 @@ export const logout = () => {
   });
 };
 
-export const verifyEmail = (token) => {
-  return request(`/api/auth/verify-email?token=${token}`, {
-    method: "GET",
+export const verifyEmail = (email, code) => {
+  return request("/api/auth/verify-email", {
+    method: "POST",
+    body: JSON.stringify({ email, code }),
   });
 };
 

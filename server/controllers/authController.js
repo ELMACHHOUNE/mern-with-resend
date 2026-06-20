@@ -35,22 +35,20 @@ const signup = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const verificationToken = crypto.randomBytes(32).toString("hex");
+    const verificationCode = crypto.randomInt(100000, 999999).toString();
 
     const user = await User.create({
       name: name.trim(),
       email: normalizedEmail,
       password: hashedPassword,
-      verificationToken,
+      verificationToken: verificationCode,
     });
-
-    const verifyUrl = `${process.env.CLIENT_URL}/verify-email?token=${verificationToken}`;
 
     const { error } = await resend.emails.send({
       from: "Admin <admin@3d-maghribi.com>",
       to: normalizedEmail,
-      subject: "Verify your email address",
-      html: `<p>Hi ${name.trim()},</p><p>Click <a href="${verifyUrl}">here</a> to verify your email address.</p><p>Or paste this link in your browser:</p><p>${verifyUrl}</p>`,
+      subject: "Your verification code",
+      html: `<p>Hi ${name.trim()},</p><p>Your verification code is:</p><h2 style="font-size:32px;letter-spacing:8px;text-align:center;color:#4f46e5;">${verificationCode}</h2><p>Enter this code on the verification page to activate your account.</p>`,
     });
 
     if (error) {
@@ -71,19 +69,22 @@ const signup = async (req, res) => {
 };
 
 const verifyEmail = async (req, res) => {
-  const { token } = req.query;
+  const { email, code } = req.body;
 
-  if (!token) {
-    return res.status(400).json({ message: "Verification token is required" });
+  if (!email || !code) {
+    return res.status(400).json({ message: "Email and verification code are required" });
   }
 
   try {
-    const user = await User.findOne({ verificationToken: token });
+    const user = await User.findOne({
+      email: email.toLowerCase().trim(),
+      verificationToken: code,
+    });
 
     if (!user) {
       return res
         .status(400)
-        .json({ message: "Invalid or expired verification token" });
+        .json({ message: "Invalid verification code" });
     }
 
     user.isVerified = true;

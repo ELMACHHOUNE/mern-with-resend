@@ -14,6 +14,6 @@ router.post("/signup", signup);
 router.post("/signin", signin);
 router.post("/logout", logout);
 router.get("/me", authMiddleware, getCurrentUser);
-router.get("/verify-email", verifyEmail);
+router.post("/verify-email", verifyEmail);
 
 module.exports = router;
