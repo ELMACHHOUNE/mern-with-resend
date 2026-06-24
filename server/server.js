@@ -33,11 +33,20 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(express.json({
-  verify: (req, _res, buf) => {
-    req.rawBody = buf.toString("utf-8");
-  },
-}));
+app.use("/inbound-email", express.raw({ type: "*/*" }), (req, _res, next) => {
+  if (Buffer.isBuffer(req.body)) {
+    req.rawBody = req.body.toString("utf-8");
+    try {
+      req.body = JSON.parse(req.rawBody);
+    } catch (e) {
+      req.body = {};
+    }
+  }
+  next();
+});
+app.use("/inbound-email", inboundRoutes);
+
+app.use(express.json());
 
 app.get("/", (req, res) => {
   res.send("Server is running");
@@ -54,7 +63,6 @@ app.get("/api/health", (req, res) => {
   res.json({ status: "ok" });
 });
 
-app.use("/inbound-email", inboundRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/email", emailRoutes);
 app.use("/api/emails", inboxRoutes);

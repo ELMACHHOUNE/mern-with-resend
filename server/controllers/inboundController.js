@@ -16,6 +16,7 @@ const inboundWebhook = async (req, res) => {
     if (signingSecret) {
       try {
         const rawBody = req.rawBody || JSON.stringify(req.body);
+        console.log("[WEBHOOK] Verification debug: hasRawBody=", !!req.rawBody, "rawBodyLength=", rawBody?.length, "hasHeaders.webhook-id=", !!req.headers["webhook-id"]);
         const h = req.headers;
         const { error: sigError } = await resend.webhooks.verify({
           webhookSecret: signingSecret,
@@ -32,8 +33,8 @@ const inboundWebhook = async (req, res) => {
           return res.status(401).send("Signature verification failed");
         }
       } catch (verifyErr) {
-        console.error("[WEBHOOK] Signature verification threw:", verifyErr.message);
-        return res.status(401).send("Signature verification error");
+        console.error("[WEBHOOK] Signature verification threw:", verifyErr.message, "rawBody length:", rawBody?.length, "hasHeaders:", !!h["webhook-id"], !!h["webhook-timestamp"], !!h["webhook-signature"]);
+        return res.status(401).send(`Signature verification error: ${verifyErr.message}`);
       }
     } else {
       console.warn("[WEBHOOK] RESEND_WEBHOOK_SECRET not set - skipping signature verification");
