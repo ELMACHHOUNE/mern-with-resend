@@ -20,12 +20,14 @@ export default function InboxLayout() {
   const [isSearching, setIsSearching] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [unreadCounts, setUnreadCounts] = useState({ inbox: 0 });
   const pageRef = useRef(1);
 
   const loadThreads = useCallback(
     async (folder, page = 1) => {
       setLoading(true);
+      setError("");
       try {
         const data = await listThreads(folder, page);
         if (page === 1) {
@@ -37,6 +39,7 @@ export default function InboxLayout() {
         pageRef.current = page;
       } catch (err) {
         console.error("Failed to load threads:", err);
+        setError(err.message || "Failed to load emails");
       } finally {
         setLoading(false);
       }
@@ -159,6 +162,11 @@ export default function InboxLayout() {
             />
           ) : (
             <div className="flex flex-1 flex-col overflow-hidden">
+              {error && (
+                <div className="mx-4 mt-3 rounded-[8px] border border-[var(--color-accent-red)]/20 bg-[var(--color-accent-red)]/10 px-3 py-2 text-xs text-[var(--color-accent-red)]">
+                  {error}
+                </div>
+              )}
               <EmailList
                 threads={threads}
                 activeFolder={activeFolder}
