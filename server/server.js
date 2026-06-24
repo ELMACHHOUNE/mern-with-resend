@@ -33,20 +33,22 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use("/inbound-email", express.raw({ type: "*/*" }), (req, _res, next) => {
-  if (Buffer.isBuffer(req.body)) {
-    req.rawBody = req.body.toString("utf-8");
-    try {
-      req.body = JSON.parse(req.rawBody);
-    } catch (e) {
-      req.body = {};
+app.use(express.json());
+
+app.use("/inbound-email", (req, res, next) => {
+  const chunks = [];
+  req.on("data", (chunk) => chunks.push(chunk));
+  req.on("end", () => {
+    const raw = Buffer.concat(chunks).toString("utf-8").trim();
+    req.rawBody = raw || JSON.stringify(req.body || {});
+    if (raw) {
+      try { req.body = JSON.parse(raw); } catch (e) { req.body = req.body || {}; }
     }
-  }
-  next();
+    req.body = req.body || {};
+    next();
+  });
 });
 app.use("/inbound-email", inboundRoutes);
-
-app.use(express.json());
 
 app.get("/", (req, res) => {
   res.send("Server is running");

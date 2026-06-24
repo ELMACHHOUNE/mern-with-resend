@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import AuthForm from "../../components/auth/AuthForm";
 import AuthIllustration from "../../components/auth/AuthIllustration";
 import { getCurrentUser, logout, signin, signup, verifyEmail, resendCode, forgotPassword, resetPassword } from "../../api/auth";
@@ -8,10 +8,7 @@ const TOKEN_KEY = "auth_token";
 
 function PageShell({ children }) {
   return (
-    <main
-      className="min-h-screen"
-      style={{ backgroundColor: "var(--color-canvas)" }}
-    >
+    <main className="min-h-screen" style={{ backgroundColor: "var(--color-canvas)" }}>
       <div className="mx-auto flex min-h-screen max-w-6xl flex-col gap-6 p-4 sm:grid sm:grid-cols-[1.1fr_0.9fr] sm:p-6">
         <AuthIllustration />
         {children}
@@ -23,7 +20,7 @@ function PageShell({ children }) {
 function AuthCard({ children, compact }) {
   return (
     <div
-      className={`rounded-[12px] border border-[var(--color-hairline-strong)] bg-[var(--color-surface-card)] p-8 ${
+      className={`rounded-[18px] border border-[var(--color-hairline)] bg-[var(--color-surface-card)] p-8 ${
         compact ? "text-center" : ""
       }`}
     >
@@ -34,7 +31,8 @@ function AuthCard({ children, compact }) {
 
 export default function AuthPage() {
   const navigate = useNavigate();
-  const [mode, setMode] = useState("signin");
+  const [searchParams] = useSearchParams();
+  const [mode, setMode] = useState(searchParams.get("mode") || "signin");
   const [token, setToken] = useState(localStorage.getItem(TOKEN_KEY) || "");
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -54,7 +52,7 @@ export default function AuthPage() {
       try {
         const data = await getCurrentUser(token);
         setUser(data.user);
-        navigate("/home", { replace: true });
+        navigate("/inbox", { replace: true });
       } catch (err) {
         localStorage.removeItem(TOKEN_KEY);
         setToken("");
@@ -103,7 +101,7 @@ export default function AuthPage() {
         setUser(data.user);
         setStatus(data.message);
         setFormData({ name: "", email: "", password: "" });
-        navigate("/home", { replace: true });
+        navigate("/inbox", { replace: true });
       }
     } catch (err) {
       setError(err.message || "Authentication failed");
@@ -209,20 +207,20 @@ export default function AuthPage() {
         <div className="mx-auto flex min-h-[calc(100vh-2rem)] max-w-6xl items-center gap-6 p-4 sm:grid sm:grid-cols-[1.1fr_0.9fr] sm:p-6">
           <AuthIllustration />
           <AuthCard>
-            <div className="inline-flex rounded-full border border-[var(--color-hairline)] bg-[var(--color-surface-elevated)] px-3 py-1 text-xs text-[var(--color-accent-green)]">
+            <div className="inline-flex rounded-[9999px] border border-[var(--color-hairline)] bg-[var(--color-surface-elevated)] px-3 py-1 text-xs" style={{ color: "var(--color-accent-green)" }}>
               Authenticated
             </div>
             <h1
-              className="mt-5 text-3xl font-medium leading-none tracking-tight text-[var(--color-ink)]"
+              className="mt-5 text-3xl font-semibold leading-[1.1] tracking-[-0.022em] text-[var(--color-ink)]"
               style={{ fontFamily: "var(--font-display)" }}
             >
               {greeting.title}
             </h1>
-            <p className="mt-2 text-sm text-[var(--color-body)]">{greeting.subtitle}</p>
+            <p className="mt-2 text-[17px] leading-[1.47] tracking-[-0.022em] text-[var(--color-charcoal)]">{greeting.subtitle}</p>
 
-            <div className="mt-8 rounded-[8px] border border-[var(--color-hairline)] bg-[var(--color-surface-elevated)] p-5">
+            <div className="mt-8 rounded-[11px] border border-[var(--color-hairline)] bg-[var(--color-surface-elevated)] p-5">
               <p className="text-sm font-medium text-[var(--color-charcoal)]">Current user</p>
-              <div className="mt-4 space-y-2 text-sm text-[var(--color-body)]">
+              <div className="mt-4 space-y-2 text-sm text-[var(--color-charcoal)]">
                 <p><span className="font-medium text-[var(--color-ink)]">Name:</span> {user.name}</p>
                 <p><span className="font-medium text-[var(--color-ink)]">Email:</span> {user.email}</p>
               </div>
@@ -232,7 +230,7 @@ export default function AuthPage() {
               type="button"
               onClick={onLogout}
               disabled={loading}
-              className="mt-6 h-9 w-full rounded-[8px] bg-[var(--color-primary)] px-4 text-sm font-medium text-[var(--color-primary-on)] transition hover:bg-[var(--color-body)] disabled:cursor-not-allowed disabled:opacity-50"
+              className="mt-6 w-full rounded-[9999px] bg-[var(--color-primary)] px-[22px] py-[11px] text-[17px] leading-none text-[var(--color-primary-on)] transition active:scale-[0.95] hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {loading ? "Logging out..." : "Logout"}
             </button>
@@ -248,30 +246,30 @@ export default function AuthPage() {
         <AuthCard compact>
           {mode === "verified" ? (
             <>
-              <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-[var(--color-accent-green)]/10 text-lg text-[var(--color-accent-green)]">
+              <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full" style={{ backgroundColor: "rgba(48, 209, 88, 0.1)", color: "var(--color-accent-green)" }}>
                 ✓
               </div>
-              <h1 className="text-xl font-medium text-[var(--color-ink)]" style={{ fontFamily: "var(--font-display)" }}>
+              <h1 className="text-xl font-semibold leading-[1.1] tracking-[-0.022em] text-[var(--color-ink)]" style={{ fontFamily: "var(--font-display)" }}>
                 Email verified!
               </h1>
-              <p className="mt-2 text-sm text-[var(--color-body)]">{status}</p>
+              <p className="mt-2 text-[17px] leading-[1.47] tracking-[-0.022em] text-[var(--color-charcoal)]">{status}</p>
               <button
                 type="button"
                 onClick={() => setMode("signin")}
-                className="mt-6 h-9 w-full rounded-[8px] bg-[var(--color-primary)] px-4 text-sm font-medium text-[var(--color-primary-on)] transition hover:bg-[var(--color-body)]"
+                className="mt-6 w-full rounded-[9999px] bg-[var(--color-primary)] px-[22px] py-[11px] text-[17px] leading-none text-[var(--color-primary-on)] transition active:scale-[0.95] hover:opacity-90"
               >
                 Go to sign in
               </button>
             </>
           ) : (
             <>
-              <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-[var(--color-accent-blue)]/10 text-lg text-[var(--color-accent-blue)]">
+              <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full" style={{ backgroundColor: "rgba(0, 102, 204, 0.1)", color: "var(--color-accent-blue)" }}>
                 ✉
               </div>
-              <h1 className="text-xl font-medium text-[var(--color-ink)]" style={{ fontFamily: "var(--font-display)" }}>
+              <h1 className="text-xl font-semibold leading-[1.1] tracking-[-0.022em] text-[var(--color-ink)]" style={{ fontFamily: "var(--font-display)" }}>
                 Check your email
               </h1>
-              <p className="mt-2 text-sm text-[var(--color-body)]">
+              <p className="mt-2 text-[17px] leading-[1.47] tracking-[-0.022em] text-[var(--color-charcoal)]">
                 Enter the email and the 6-digit code we sent to activate your account.
               </p>
 
@@ -281,7 +279,7 @@ export default function AuthPage() {
                   placeholder="your@email.com"
                   value={formData.email}
                   onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
-                  className="h-10 w-full rounded-[8px] border border-[var(--color-hairline-strong)] bg-[var(--color-surface-card)] px-3.5 py-2.5 text-sm text-[var(--color-ink)] outline-none transition placeholder:text-[var(--color-stone)] focus:border-[var(--color-ink)]"
+                  className="h-10 w-full rounded-[11px] border border-[var(--color-hairline)] bg-[var(--color-surface-card)] px-3.5 py-2.5 text-sm text-[var(--color-ink)] outline-none transition placeholder:text-[var(--color-ash)] focus:border-[var(--color-primary)]"
                   required
                 />
                 <input
@@ -291,7 +289,7 @@ export default function AuthPage() {
                   placeholder="000000"
                   value={verificationCode}
                   onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                  className="h-10 w-full rounded-[8px] border border-[var(--color-hairline-strong)] bg-[var(--color-surface-card)] px-3.5 py-2.5 text-center text-2xl tracking-[0.5em] text-[var(--color-ink)] outline-none transition placeholder:text-[var(--color-stone)] focus:border-[var(--color-ink)]"
+                  className="h-10 w-full rounded-[11px] border border-[var(--color-hairline)] bg-[var(--color-surface-card)] px-3.5 py-2.5 text-center text-2xl tracking-[0.5em] text-[var(--color-ink)] outline-none transition placeholder:text-[var(--color-ash)] focus:border-[var(--color-primary)]"
                   required
                 />
 
@@ -302,7 +300,7 @@ export default function AuthPage() {
                 <button
                   type="submit"
                   disabled={loading || !formData.email || verificationCode.length < 6}
-                  className="h-9 w-full rounded-[8px] bg-[var(--color-primary)] px-4 text-sm font-medium text-[var(--color-primary-on)] transition hover:bg-[var(--color-body)] disabled:cursor-not-allowed disabled:opacity-50"
+                  className="w-full rounded-[9999px] bg-[var(--color-primary)] px-[22px] py-[11px] text-[17px] leading-none text-[var(--color-primary-on)] transition active:scale-[0.95] hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {loading ? "Verifying..." : "Verify email"}
                 </button>
@@ -313,7 +311,7 @@ export default function AuthPage() {
                   type="button"
                   onClick={onResendCode}
                   disabled={loading}
-                  className="text-sm text-[var(--color-link)] transition hover:text-[var(--color-accent-blue)] disabled:opacity-50"
+                  className="text-sm text-[var(--color-primary)] transition hover:opacity-80 disabled:opacity-50"
                 >
                   {loading ? "Sending..." : "Resend code"}
                 </button>
@@ -336,13 +334,13 @@ export default function AuthPage() {
     return (
       <PageShell>
         <AuthCard compact>
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-[var(--color-accent-orange)]/10 text-lg text-[var(--color-accent-orange)]">
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full" style={{ backgroundColor: "rgba(255, 159, 10, 0.1)", color: "var(--color-accent-orange)" }}>
             ?
           </div>
-          <h1 className="text-xl font-medium text-[var(--color-ink)]" style={{ fontFamily: "var(--font-display)" }}>
+          <h1 className="text-xl font-semibold leading-[1.1] tracking-[-0.022em] text-[var(--color-ink)]" style={{ fontFamily: "var(--font-display)" }}>
             Forgot password
           </h1>
-          <p className="mt-2 text-sm text-[var(--color-body)]">
+          <p className="mt-2 text-[17px] leading-[1.47] tracking-[-0.022em] text-[var(--color-charcoal)]">
             Enter your email and we'll send you a reset code.
           </p>
 
@@ -352,7 +350,7 @@ export default function AuthPage() {
               placeholder="your@email.com"
               value={formData.email}
               onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
-              className="h-10 w-full rounded-[8px] border border-[var(--color-hairline-strong)] bg-[var(--color-surface-card)] px-3.5 py-2.5 text-sm text-[var(--color-ink)] outline-none transition placeholder:text-[var(--color-stone)] focus:border-[var(--color-ink)]"
+              className="h-10 w-full rounded-[11px] border border-[var(--color-hairline)] bg-[var(--color-surface-card)] px-3.5 py-2.5 text-sm text-[var(--color-ink)] outline-none transition placeholder:text-[var(--color-ash)] focus:border-[var(--color-primary)]"
               required
             />
 
@@ -363,7 +361,7 @@ export default function AuthPage() {
             <button
               type="submit"
               disabled={loading || !formData.email}
-              className="h-9 w-full rounded-[8px] bg-[var(--color-primary)] px-4 text-sm font-medium text-[var(--color-primary-on)] transition hover:bg-[var(--color-body)] disabled:cursor-not-allowed disabled:opacity-50"
+              className="w-full rounded-[9999px] bg-[var(--color-primary)] px-[22px] py-[11px] text-[17px] leading-none text-[var(--color-primary-on)] transition active:scale-[0.95] hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {loading ? "Sending..." : "Send reset code"}
             </button>
@@ -385,13 +383,13 @@ export default function AuthPage() {
     return (
       <PageShell>
         <AuthCard compact>
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-[var(--color-accent-blue)]/10 text-lg text-[var(--color-accent-blue)]">
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full" style={{ backgroundColor: "rgba(0, 102, 204, 0.1)", color: "var(--color-accent-blue)" }}>
             ✉
           </div>
-          <h1 className="text-xl font-medium text-[var(--color-ink)]" style={{ fontFamily: "var(--font-display)" }}>
+          <h1 className="text-xl font-semibold leading-[1.1] tracking-[-0.022em] text-[var(--color-ink)]" style={{ fontFamily: "var(--font-display)" }}>
             Reset code sent
           </h1>
-          <p className="mt-2 text-sm text-[var(--color-body)]">
+          <p className="mt-2 text-[17px] leading-[1.47] tracking-[-0.022em] text-[var(--color-charcoal)]">
             Enter the code from your email and your new password.
           </p>
 
@@ -401,7 +399,7 @@ export default function AuthPage() {
               placeholder="your@email.com"
               value={formData.email}
               onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
-              className="h-10 w-full rounded-[8px] border border-[var(--color-hairline-strong)] bg-[var(--color-surface-card)] px-3.5 py-2.5 text-sm text-[var(--color-ink)] outline-none transition placeholder:text-[var(--color-stone)] focus:border-[var(--color-ink)]"
+              className="h-10 w-full rounded-[11px] border border-[var(--color-hairline)] bg-[var(--color-surface-card)] px-3.5 py-2.5 text-sm text-[var(--color-ink)] outline-none transition placeholder:text-[var(--color-ash)] focus:border-[var(--color-primary)]"
               required
             />
             <input
@@ -411,7 +409,7 @@ export default function AuthPage() {
               placeholder="000000"
               value={verificationCode}
               onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
-              className="h-10 w-full rounded-[8px] border border-[var(--color-hairline-strong)] bg-[var(--color-surface-card)] px-3.5 py-2.5 text-center text-2xl tracking-[0.5em] text-[var(--color-ink)] outline-none transition placeholder:text-[var(--color-stone)] focus:border-[var(--color-ink)]"
+              className="h-10 w-full rounded-[11px] border border-[var(--color-hairline)] bg-[var(--color-surface-card)] px-3.5 py-2.5 text-center text-2xl tracking-[0.5em] text-[var(--color-ink)] outline-none transition placeholder:text-[var(--color-ash)] focus:border-[var(--color-primary)]"
               required
             />
             <input
@@ -420,7 +418,7 @@ export default function AuthPage() {
               placeholder="New password"
               value={formData.password}
               onChange={onInputChange}
-              className="h-10 w-full rounded-[8px] border border-[var(--color-hairline-strong)] bg-[var(--color-surface-card)] px-3.5 py-2.5 text-sm text-[var(--color-ink)] outline-none transition placeholder:text-[var(--color-stone)] focus:border-[var(--color-ink)]"
+              className="h-10 w-full rounded-[11px] border border-[var(--color-hairline)] bg-[var(--color-surface-card)] px-3.5 py-2.5 text-sm text-[var(--color-ink)] outline-none transition placeholder:text-[var(--color-ash)] focus:border-[var(--color-primary)]"
               required
               minLength={6}
             />
@@ -432,7 +430,7 @@ export default function AuthPage() {
             <button
               type="submit"
               disabled={loading || !formData.email || verificationCode.length < 6 || !formData.password}
-              className="h-9 w-full rounded-[8px] bg-[var(--color-primary)] px-4 text-sm font-medium text-[var(--color-primary-on)] transition hover:bg-[var(--color-body)] disabled:cursor-not-allowed disabled:opacity-50"
+              className="w-full rounded-[9999px] bg-[var(--color-primary)] px-[22px] py-[11px] text-[17px] leading-none text-[var(--color-primary-on)] transition active:scale-[0.95] hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {loading ? "Resetting..." : "Reset password"}
             </button>
@@ -454,17 +452,17 @@ export default function AuthPage() {
     return (
       <PageShell>
         <AuthCard compact>
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-[var(--color-accent-green)]/10 text-lg text-[var(--color-accent-green)]">
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full" style={{ backgroundColor: "rgba(48, 209, 88, 0.1)", color: "var(--color-accent-green)" }}>
             ✓
           </div>
-          <h1 className="text-xl font-medium text-[var(--color-ink)]" style={{ fontFamily: "var(--font-display)" }}>
+          <h1 className="text-xl font-semibold leading-[1.1] tracking-[-0.022em] text-[var(--color-ink)]" style={{ fontFamily: "var(--font-display)" }}>
             Password reset!
           </h1>
-          <p className="mt-2 text-sm text-[var(--color-body)]">{status}</p>
+          <p className="mt-2 text-[17px] leading-[1.47] tracking-[-0.022em] text-[var(--color-charcoal)]">{status}</p>
           <button
             type="button"
             onClick={() => setMode("signin")}
-            className="mt-6 h-9 w-full rounded-[8px] bg-[var(--color-primary)] px-4 text-sm font-medium text-[var(--color-primary-on)] transition hover:bg-[var(--color-body)]"
+            className="mt-6 w-full rounded-[9999px] bg-[var(--color-primary)] px-[22px] py-[11px] text-[17px] leading-none text-[var(--color-primary-on)] transition active:scale-[0.95] hover:opacity-90"
           >
             Go to sign in
           </button>

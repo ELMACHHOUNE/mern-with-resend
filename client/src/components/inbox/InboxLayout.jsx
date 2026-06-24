@@ -149,7 +149,7 @@ export default function InboxLayout() {
       />
 
       <div className="flex flex-1 flex-col overflow-hidden">
-        <div className="flex items-center gap-3 border-b border-[var(--color-hairline)] px-4 py-3">
+        <div className="flex items-center gap-3 border-b border-[var(--color-hairline)] bg-[var(--color-surface-card)] px-5 py-3">
           <SearchBar onSearch={handleSearch} />
         </div>
 

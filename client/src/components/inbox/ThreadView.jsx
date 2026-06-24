@@ -106,7 +106,7 @@ export default function ThreadView({
 
   return (
     <div className="flex flex-1 flex-col overflow-y-auto">
-      <div className="flex items-center gap-3 border-b border-[var(--color-hairline)] px-4 py-3">
+      <div className="flex items-center gap-3 border-b border-[var(--color-hairline)] bg-[var(--color-surface-card)] px-5 py-3">
         <button
           type="button"
           onClick={onBack}
@@ -114,7 +114,7 @@ export default function ThreadView({
         >
           ← Back
         </button>
-        <h2 className="flex-1 truncate text-base font-medium text-[var(--color-ink)]">
+        <h2 className="flex-1 truncate text-base font-semibold tracking-[-0.022em] text-[var(--color-ink)]">
           {thread.subject || "(no subject)"}
         </h2>
         <span className="text-xs text-[var(--color-charcoal)]">
@@ -132,15 +132,15 @@ export default function ThreadView({
           return (
             <div
               key={msg._id}
-              className="border-b border-[var(--color-hairline)] px-4 py-4"
+              className="border-b border-[var(--color-hairline)] px-5 py-5"
             >
               <div className="flex items-start justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--color-accent-blue)]/20 text-xs font-medium text-[var(--color-accent-blue)]">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--color-primary)]/10 text-xs font-medium text-[var(--color-primary)]">
                     {extractName(msg.from)[0]?.toUpperCase() || "?"}
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-[var(--color-ink)]">
+                    <p className="text-sm font-semibold tracking-[-0.022em] text-[var(--color-ink)]">
                       {extractName(msg.from)}
                     </p>
                     <p className="text-xs text-[var(--color-charcoal)]">
@@ -170,11 +170,11 @@ export default function ThreadView({
                 <div className="mt-3">
                   {sanitizedHtml ? (
                     <div
-                      className="prose prose-invert max-w-none text-sm leading-relaxed text-[var(--color-body)]"
+                      className="prose max-w-none text-[17px] leading-[1.47] tracking-[-0.022em] text-[var(--color-body)]"
                       dangerouslySetInnerHTML={{ __html: sanitizedHtml }}
                     />
                   ) : (
-                    <p className="whitespace-pre-wrap text-sm leading-relaxed text-[var(--color-body)]">
+                    <p className="whitespace-pre-wrap text-[17px] leading-[1.47] tracking-[-0.022em] text-[var(--color-body)]">
                       {msg.text || "(no content)"}
                     </p>
                   )}
@@ -187,9 +187,9 @@ export default function ThreadView({
                           href={getAttachmentUrl(msg._id, att.resendAttachmentId)}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center gap-1.5 rounded-[6px] border border-[var(--color-hairline-strong)] bg-[var(--color-surface-elevated)] px-3 py-1.5 text-xs text-[var(--color-link)] transition hover:bg-[var(--color-surface-card)]"
+                          className="flex items-center gap-1.5 rounded-[9999px] border border-[var(--color-hairline)] bg-[var(--color-surface-elevated)] px-3 py-1.5 text-xs text-[var(--color-primary)] transition hover:bg-[var(--color-surface-card)]"
                         >
-                          <span>📎</span>
+                          <span className="text-xs">📎</span>
                           <span className="truncate max-w-[150px]">
                             {att.filename}
                           </span>
@@ -211,7 +211,7 @@ export default function ThreadView({
                           setReplyMode(msg._id);
                           setReplyText("");
                         }}
-                        className="text-xs text-[var(--color-link)] hover:underline"
+                        className="rounded-[9999px] border border-[var(--color-primary)] px-[14px] py-[6px] text-xs text-[var(--color-primary)] transition hover:opacity-80"
                       >
                         Reply
                       </button>
@@ -221,7 +221,7 @@ export default function ThreadView({
                           setReplyMode(`forward-${msg._id}`);
                           setReplyText("");
                         }}
-                        className="text-xs text-[var(--color-link)] hover:underline"
+                        className="text-xs text-[var(--color-primary)] transition hover:opacity-80"
                       >
                         Forward
                       </button>
@@ -229,19 +229,19 @@ export default function ThreadView({
                   )}
 
                   {replyMode === msg._id && (
-                    <div className="mt-3 rounded-[8px] border border-[var(--color-hairline-strong)] bg-[var(--color-surface-elevated)] p-3">
+                    <div className="mt-3 rounded-[11px] border border-[var(--color-hairline)] bg-[var(--color-surface-elevated)] p-3">
                       <textarea
                         value={replyText}
                         onChange={(e) => setReplyText(e.target.value)}
                         placeholder="Write your reply..."
                         rows={4}
-                        className="w-full resize-none rounded-[6px] border border-[var(--color-hairline-strong)] bg-[var(--color-surface-card)] p-2 text-sm text-[var(--color-ink)] placeholder:text-[var(--color-charcoal)] focus:border-[var(--color-accent-blue)] focus:outline-none"
+                        className="w-full resize-none rounded-[8px] border border-[var(--color-hairline)] bg-[var(--color-surface-card)] p-2 text-sm text-[var(--color-ink)] placeholder:text-[var(--color-charcoal)] focus:border-[var(--color-primary)] focus:outline-none"
                       />
                       <div className="mt-2 flex justify-end gap-2">
                         <button
                           type="button"
                           onClick={() => setReplyMode(null)}
-                          className="rounded-[6px] px-3 py-1.5 text-xs text-[var(--color-charcoal)] hover:text-[var(--color-ink)]"
+                          className="rounded-[9999px] px-3 py-1.5 text-xs text-[var(--color-charcoal)] hover:text-[var(--color-ink)]"
                         >
                           Cancel
                         </button>
@@ -249,7 +249,7 @@ export default function ThreadView({
                           type="button"
                           onClick={() => handleReply(msg, "reply")}
                           disabled={sending || !replyText.trim()}
-                          className="rounded-[6px] bg-[var(--color-accent-blue)] px-3 py-1.5 text-xs font-medium text-white transition hover:opacity-90 disabled:opacity-50"
+                          className="rounded-[9999px] bg-[var(--color-primary)] px-[14px] py-[6px] text-xs font-medium text-[var(--color-primary-on)] transition active:scale-[0.95] hover:opacity-90 disabled:opacity-50"
                         >
                           {sending ? "Sending..." : "Send"}
                         </button>
@@ -258,19 +258,19 @@ export default function ThreadView({
                   )}
 
                   {replyMode === `forward-${msg._id}` && (
-                    <div className="mt-3 rounded-[8px] border border-[var(--color-hairline-strong)] bg-[var(--color-surface-elevated)] p-3">
+                    <div className="mt-3 rounded-[11px] border border-[var(--color-hairline)] bg-[var(--color-surface-elevated)] p-3">
                       <textarea
                         value={replyText}
                         onChange={(e) => setReplyText(e.target.value)}
                         placeholder="Add a note before forwarding..."
                         rows={4}
-                        className="w-full resize-none rounded-[6px] border border-[var(--color-hairline-strong)] bg-[var(--color-surface-card)] p-2 text-sm text-[var(--color-ink)] placeholder:text-[var(--color-charcoal)] focus:border-[var(--color-accent-blue)] focus:outline-none"
+                        className="w-full resize-none rounded-[8px] border border-[var(--color-hairline)] bg-[var(--color-surface-card)] p-2 text-sm text-[var(--color-ink)] placeholder:text-[var(--color-charcoal)] focus:border-[var(--color-primary)] focus:outline-none"
                       />
                       <div className="mt-2 flex justify-end gap-2">
                         <button
                           type="button"
                           onClick={() => setReplyMode(null)}
-                          className="rounded-[6px] px-3 py-1.5 text-xs text-[var(--color-charcoal)] hover:text-[var(--color-ink)]"
+                          className="rounded-[9999px] px-3 py-1.5 text-xs text-[var(--color-charcoal)] hover:text-[var(--color-ink)]"
                         >
                           Cancel
                         </button>
@@ -278,7 +278,7 @@ export default function ThreadView({
                           type="button"
                           onClick={() => handleReply(msg, "forward")}
                           disabled={sending}
-                          className="rounded-[6px] bg-[var(--color-accent-blue)] px-3 py-1.5 text-xs font-medium text-white transition hover:opacity-90 disabled:opacity-50"
+                          className="rounded-[9999px] bg-[var(--color-primary)] px-[14px] py-[6px] text-xs font-medium text-[var(--color-primary-on)] transition active:scale-[0.95] hover:opacity-90 disabled:opacity-50"
                         >
                           {sending ? "Forwarding..." : "Forward"}
                         </button>

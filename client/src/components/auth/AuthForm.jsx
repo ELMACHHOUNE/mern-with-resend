@@ -11,29 +11,29 @@ export default function AuthForm({
   const isSignup = mode === "signup";
 
   return (
-    <div className="rounded-[12px] border border-[var(--color-hairline-strong)] bg-[var(--color-surface-card)] p-8">
-      <div className="mb-2 inline-flex rounded-full border border-[var(--color-hairline)] bg-[var(--color-surface-elevated)] px-3 py-1 text-xs text-[var(--color-charcoal)]">
+    <div className="rounded-[18px] border border-[var(--color-hairline)] bg-[var(--color-surface-card)] p-8">
+      <div className="mb-2 inline-flex rounded-[9999px] border border-[var(--color-hairline)] bg-[var(--color-surface-elevated)] px-3 py-1 text-xs text-[var(--color-charcoal)]">
         {isSignup ? "Get started" : "Welcome back"}
       </div>
 
       <h1
-        className="mt-4 text-[clamp(2rem,5vw,2.5rem)] font-medium leading-none tracking-tight text-[var(--color-ink)]"
+        className="mt-4 text-[clamp(2rem,5vw,2.5rem)] font-semibold leading-[1.1] tracking-[-0.022em] text-[var(--color-ink)]"
         style={{ fontFamily: "var(--font-display)" }}
       >
         {isSignup ? "Create your account" : "Sign in"}
       </h1>
 
-      <p className="mt-2 text-sm text-[var(--color-body)]">
+      <p className="mt-2 text-[17px] leading-[1.47] tracking-[-0.022em] text-[var(--color-charcoal)]">
         {isSignup
           ? "Enter your details to get started."
           : "Enter your credentials to continue."}
       </p>
 
-      <div className="mb-6 mt-6 flex gap-1 rounded-[8px] bg-[var(--color-surface-elevated)] p-1">
+      <div className="mb-6 mt-6 flex gap-1 rounded-[11px] bg-[var(--color-surface-elevated)] p-1">
         <button
           type="button"
           onClick={() => onModeChange("signin")}
-          className={`flex-1 rounded-[6px] px-4 py-2 text-sm font-medium transition ${
+          className={`flex-1 rounded-[8px] px-4 py-2 text-sm font-medium transition ${
             !isSignup
               ? "bg-[var(--color-surface-card)] text-[var(--color-ink)]"
               : "text-[var(--color-charcoal)]"
@@ -44,7 +44,7 @@ export default function AuthForm({
         <button
           type="button"
           onClick={() => onModeChange("signup")}
-          className={`flex-1 rounded-[6px] px-4 py-2 text-sm font-medium transition ${
+          className={`flex-1 rounded-[8px] px-4 py-2 text-sm font-medium transition ${
             isSignup
               ? "bg-[var(--color-surface-card)] text-[var(--color-ink)]"
               : "text-[var(--color-charcoal)]"
@@ -55,7 +55,7 @@ export default function AuthForm({
       </div>
 
       {status ? (
-        <p className="mb-4 rounded-[8px] bg-[var(--color-surface-elevated)] px-4 py-3 text-sm text-[var(--color-charcoal)]">
+        <p className="mb-4 rounded-[11px] bg-[var(--color-surface-elevated)] px-4 py-3 text-sm text-[var(--color-charcoal)]">
           {status}
         </p>
       ) : null}
@@ -78,7 +78,7 @@ export default function AuthForm({
               placeholder="john doe"
               value={formData.name}
               onChange={onInputChange}
-              className="h-10 w-full rounded-[8px] border border-[var(--color-hairline-strong)] bg-[var(--color-surface-card)] px-3.5 py-2.5 text-sm text-[var(--color-ink)] outline-none transition placeholder:text-[var(--color-stone)] focus:border-[var(--color-ink)]"
+              className="h-10 w-full rounded-[11px] border border-[var(--color-hairline)] bg-[var(--color-surface-card)] px-3.5 py-2.5 text-sm text-[var(--color-ink)] outline-none transition placeholder:text-[var(--color-ash)] focus:border-[var(--color-primary)]"
               required
             />
           </div>
@@ -94,7 +94,7 @@ export default function AuthForm({
             placeholder="john.doe@gmail.com"
             value={formData.email}
             onChange={onInputChange}
-            className="h-10 w-full rounded-[8px] border border-[var(--color-hairline-strong)] bg-[var(--color-surface-card)] px-3.5 py-2.5 text-sm text-[var(--color-ink)] outline-none transition placeholder:text-[var(--color-stone)] focus:border-[var(--color-ink)]"
+            className="h-10 w-full rounded-[11px] border border-[var(--color-hairline)] bg-[var(--color-surface-card)] px-3.5 py-2.5 text-sm text-[var(--color-ink)] outline-none transition placeholder:text-[var(--color-ash)] focus:border-[var(--color-primary)]"
             required
           />
         </div>
@@ -109,7 +109,7 @@ export default function AuthForm({
             placeholder="••••••••"
             value={formData.password}
             onChange={onInputChange}
-            className="h-10 w-full rounded-[8px] border border-[var(--color-hairline-strong)] bg-[var(--color-surface-card)] px-3.5 py-2.5 text-sm text-[var(--color-ink)] outline-none transition placeholder:text-[var(--color-stone)] focus:border-[var(--color-ink)]"
+            className="h-10 w-full rounded-[11px] border border-[var(--color-hairline)] bg-[var(--color-surface-card)] px-3.5 py-2.5 text-sm text-[var(--color-ink)] outline-none transition placeholder:text-[var(--color-ash)] focus:border-[var(--color-primary)]"
             required
             minLength={6}
           />
@@ -119,7 +119,7 @@ export default function AuthForm({
           <label className="flex items-start gap-3 text-sm text-[var(--color-charcoal)]">
             <input
               type="checkbox"
-              className="mt-0.5 h-4 w-4 rounded border-[var(--color-hairline-strong)] bg-[var(--color-surface-card)] text-[var(--color-ink)]"
+              className="mt-0.5 h-4 w-4 rounded border-[var(--color-hairline)] bg-[var(--color-surface-card)] text-[var(--color-primary)]"
               required
             />
             <span>
@@ -131,7 +131,7 @@ export default function AuthForm({
         <button
           type="submit"
           disabled={loading}
-          className="h-9 w-full rounded-[8px] bg-[var(--color-primary)] px-4 text-sm font-medium text-[var(--color-primary-on)] transition hover:bg-[var(--color-body)] disabled:cursor-not-allowed disabled:opacity-50"
+          className="w-full rounded-[9999px] bg-[var(--color-primary)] px-[22px] py-[11px] text-[17px] leading-none text-[var(--color-primary-on)] transition active:scale-[0.95] hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {loading ? "Please wait..." : isSignup ? "Sign up" : "Sign in"}
         </button>
@@ -140,7 +140,7 @@ export default function AuthForm({
           <button
             type="button"
             onClick={() => onModeChange("forgot-password")}
-            className="mt-1 w-full text-center text-sm text-[var(--color-charcoal)] transition hover:text-[var(--color-link)]"
+            className="mt-1 w-full text-center text-sm text-[var(--color-charcoal)] transition hover:text-[var(--color-primary)]"
           >
             Forgot password?
           </button>
@@ -152,7 +152,7 @@ export default function AuthForm({
         <button
           type="button"
           onClick={() => onModeChange(isSignup ? "signin" : "signup")}
-          className="font-medium text-[var(--color-link)] transition hover:text-[var(--color-accent-blue)]"
+          className="font-medium text-[var(--color-primary)] transition hover:text-[var(--color-primary-focus)]"
         >
           {isSignup ? "Sign in instead" : "Create one"}
         </button>

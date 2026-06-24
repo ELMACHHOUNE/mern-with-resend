@@ -4,37 +4,6 @@ import { getCurrentUser, logout } from "../../api/auth";
 
 const TOKEN_KEY = "auth_token";
 
-function StatCard({ label, value, delta }) {
-  return (
-    <div className="rounded-[12px] border border-[var(--color-hairline-strong)] bg-[var(--color-surface-card)] p-6">
-      <p className="text-xs uppercase tracking-[0.24em] text-[var(--color-charcoal)]">
-        {label}
-      </p>
-      <div className="mt-4 flex items-end justify-between gap-4">
-        <span className="text-3xl font-medium text-[var(--color-ink)]" style={{ fontFamily: "var(--font-display)" }}>
-          {value}
-        </span>
-        <span className="rounded-full border border-[var(--color-accent-green)]/20 bg-[var(--color-accent-green)]/10 px-2.5 py-1 text-xs font-medium text-[var(--color-accent-green)]">
-          {delta}
-        </span>
-      </div>
-    </div>
-  );
-}
-
-function MiniCard({ title, subtitle, accent }) {
-  return (
-    <div className="rounded-[12px] border border-[var(--color-hairline-strong)] bg-[var(--color-surface-card)] p-5">
-      <div
-        className="h-1.5 w-12 rounded-full"
-        style={{ background: accent || "linear-gradient(90deg, var(--color-accent-blue), var(--color-accent-green))" }}
-      />
-      <p className="mt-4 text-sm font-medium text-[var(--color-ink)]">{title}</p>
-      <p className="mt-1 text-xs text-[var(--color-charcoal)]">{subtitle}</p>
-    </div>
-  );
-}
-
 export default function HomePage() {
   const navigate = useNavigate();
   const token = localStorage.getItem(TOKEN_KEY);
@@ -88,22 +57,14 @@ export default function HomePage() {
 
   return (
     <main style={{ backgroundColor: "var(--color-canvas)" }} className="min-h-screen text-[var(--color-ink)]">
-      <div
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(ellipse 80% 50% at 50% 0%, var(--color-accent-blue-glow), transparent 70%)",
-        }}
-      />
-
       <div className="relative mx-auto flex min-h-screen max-w-6xl flex-col px-4 pb-6 pt-4 sm:px-6 lg:px-8">
-        <header className="flex items-center justify-between gap-4 rounded-full border border-[var(--color-hairline-strong)] bg-[var(--color-surface-card)] px-5 py-3">
+        <header className="flex items-center justify-between gap-4 rounded-[9999px] border border-[var(--color-hairline)] bg-[var(--color-surface-card)] px-5 py-3">
           <div className="flex items-center gap-3">
             <div className="flex h-9 w-9 items-center justify-center rounded-[8px] bg-[var(--color-primary)] text-sm font-medium text-[var(--color-primary-on)]">
               E
             </div>
             <div>
-              <p className="text-sm font-medium text-[var(--color-ink)]">Email Pro</p>
+              <p className="text-sm font-semibold tracking-[-0.022em] text-[var(--color-ink)]">Email Pro</p>
               <p className="text-[10px] uppercase tracking-[0.3em] text-[var(--color-charcoal)]">
                 Dashboard
               </p>
@@ -119,40 +80,34 @@ export default function HomePage() {
           <button
             type="button"
             onClick={handleLogout}
-            className="h-9 rounded-[8px] border border-[var(--color-hairline-strong)] bg-[var(--color-surface-elevated)] px-4 text-sm font-medium text-[var(--color-ink)] transition hover:bg-[var(--color-surface-card)]"
+            className="rounded-[8px] border border-[var(--color-hairline)] bg-transparent px-4 py-2 text-sm text-[var(--color-charcoal)] transition hover:text-[var(--color-ink)]"
           >
             Logout
           </button>
         </header>
 
-        <div
-          className="relative mt-8 flex-1 overflow-hidden rounded-[12px] border border-[var(--color-hairline-strong)] bg-[var(--color-surface-card)]"
-          style={{
-            background:
-              "radial-gradient(ellipse 60% 40% at 30% 20%, var(--color-accent-orange-glow), transparent 60%), radial-gradient(ellipse 40% 30% at 80% 80%, var(--color-accent-green-glow), transparent 50%)",
-          }}
-        >
+        <div className="relative mt-8 flex-1 overflow-hidden rounded-[18px] border border-[var(--color-hairline)] bg-[var(--color-surface-card)]">
           <div className="relative flex flex-col justify-between px-6 py-8 sm:px-10 lg:px-14 lg:py-10">
             <div className="flex flex-col items-center text-center">
-              <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[var(--color-hairline)] bg-[var(--color-surface-elevated)] px-3.5 py-1.5 text-xs uppercase tracking-[0.3em] text-[var(--color-charcoal)]">
+              <div className="mb-5 inline-flex items-center gap-2 rounded-[9999px] border border-[var(--color-hairline)] bg-[var(--color-surface-elevated)] px-3.5 py-1.5 text-xs uppercase tracking-[0.3em] text-[var(--color-charcoal)]">
                 <span className="h-2 w-2 rounded-full" style={{ backgroundColor: "var(--color-accent-green)" }} />
                 {status}
               </div>
 
               <div className="relative w-full max-w-4xl">
                 <p
-                  className="select-none text-[clamp(2.5rem,10vw,6rem)] font-normal leading-none tracking-[-0.03em] text-[var(--color-ink)]"
+                  className="select-none text-[clamp(2.5rem,10vw,6rem)] font-semibold leading-[1.07] tracking-[-0.005em] text-[var(--color-ink)]"
                   style={{ fontFamily: "var(--font-display)" }}
                 >
                   {user ? `Hi, ${user.name}` : "Dashboard"}
                 </p>
 
-                <p className="mt-3 max-w-xl text-sm tracking-[0.2em] text-[var(--color-body)]">
+                <p className="mt-3 max-w-xl text-[17px] leading-[1.47] tracking-[-0.022em] text-[var(--color-charcoal)]">
                   Manage your email infrastructure
                 </p>
 
                 {error ? (
-                  <p className="mt-4 inline-block rounded-full border border-[var(--color-accent-red)]/20 bg-[var(--color-accent-red)]/10 px-4 py-2 text-sm text-[var(--color-accent-red)]">
+                  <p className="mt-4 inline-block rounded-[9999px] border border-[var(--color-accent-red)]/20 bg-[var(--color-accent-red)]/10 px-4 py-2 text-sm text-[var(--color-accent-red)]">
                     {error}
                   </p>
                 ) : null}
@@ -160,7 +115,7 @@ export default function HomePage() {
                 <button
                   type="button"
                   onClick={() => navigate("/inbox")}
-                  className="mt-8 h-9 rounded-[8px] bg-[var(--color-primary)] px-6 text-sm font-medium text-[var(--color-primary-on)] transition hover:bg-[var(--color-body)]"
+                  className="mt-8 rounded-[9999px] bg-[var(--color-primary)] px-[22px] py-[11px] text-[17px] leading-none text-[var(--color-primary-on)] transition active:scale-[0.95] hover:opacity-90"
                 >
                   Go to Inbox
                 </button>
@@ -169,21 +124,21 @@ export default function HomePage() {
 
             <div className="mt-12 grid gap-4 lg:grid-cols-[1fr_auto_1fr] lg:items-end">
               <div className="grid gap-4 sm:grid-cols-2">
-                <MiniCard
-                  title="Email Delivery"
-                  subtitle="99.9% deliverability rate"
-                  accent="linear-gradient(90deg, var(--color-accent-orange), var(--color-accent-orange))"
-                />
-                <MiniCard
-                  title="Analytics"
-                  subtitle="Real-time tracking and insights"
-                  accent="linear-gradient(90deg, var(--color-accent-blue), var(--color-accent-blue))"
-                />
+                <div className="rounded-[18px] border border-[var(--color-hairline)] bg-[var(--color-surface-elevated)] p-5">
+                  <div className="h-1.5 w-12 rounded-full" style={{ backgroundColor: "var(--color-accent-orange)" }} />
+                  <p className="mt-4 text-sm font-semibold tracking-[-0.022em] text-[var(--color-ink)]">Email Delivery</p>
+                  <p className="mt-1 text-xs text-[var(--color-charcoal)]">99.9% deliverability rate</p>
+                </div>
+                <div className="rounded-[18px] border border-[var(--color-hairline)] bg-[var(--color-surface-elevated)] p-5">
+                  <div className="h-1.5 w-12 rounded-full" style={{ backgroundColor: "var(--color-primary)" }} />
+                  <p className="mt-4 text-sm font-semibold tracking-[-0.022em] text-[var(--color-ink)]">Analytics</p>
+                  <p className="mt-1 text-xs text-[var(--color-charcoal)]">Real-time tracking and insights</p>
+                </div>
               </div>
 
-              <div className="mx-auto hidden h-32 w-32 items-center justify-center rounded-full border border-[var(--color-hairline-strong)] bg-[var(--color-surface-elevated)] text-center text-sm text-[var(--color-charcoal)] lg:flex">
+              <div className="mx-auto hidden h-32 w-32 items-center justify-center rounded-full border border-[var(--color-hairline)] bg-[var(--color-surface-elevated)] text-center text-sm text-[var(--color-charcoal)] lg:flex">
                 <div>
-                  <p className="text-3xl font-medium text-[var(--color-ink)]" style={{ fontFamily: "var(--font-display)" }}>
+                  <p className="text-3xl font-semibold tracking-[-0.022em] text-[var(--color-ink)]" style={{ fontFamily: "var(--font-display)" }}>
                     #1
                   </p>
                   <p className="mt-1 text-[10px] uppercase tracking-[0.3em] text-[var(--color-charcoal)]">
@@ -193,61 +148,56 @@ export default function HomePage() {
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2 lg:justify-self-end">
-                <MiniCard
-                  title={user?.name || "Welcome"}
-                  subtitle={user?.email || "Signed in user"}
-                  accent="linear-gradient(90deg, var(--color-accent-green), var(--color-accent-green))"
-                />
-                <MiniCard
-                  title="Team"
-                  subtitle="Collaborate with your team"
-                  accent="linear-gradient(90deg, var(--color-accent-blue), var(--color-accent-green))"
-                />
+                <div className="rounded-[18px] border border-[var(--color-hairline)] bg-[var(--color-surface-elevated)] p-5">
+                  <div className="h-1.5 w-12 rounded-full" style={{ backgroundColor: "var(--color-accent-green)" }} />
+                  <p className="mt-4 text-sm font-semibold tracking-[-0.022em] text-[var(--color-ink)]">{user?.name || "Welcome"}</p>
+                  <p className="mt-1 text-xs text-[var(--color-charcoal)]">{user?.email || "Signed in user"}</p>
+                </div>
+                <div className="rounded-[18px] border border-[var(--color-hairline)] bg-[var(--color-surface-elevated)] p-5">
+                  <div className="h-1.5 w-12 rounded-full" style={{ backgroundColor: "var(--color-primary)" }} />
+                  <p className="mt-4 text-sm font-semibold tracking-[-0.022em] text-[var(--color-ink)]">Team</p>
+                  <p className="mt-1 text-xs text-[var(--color-charcoal)]">Collaborate with your team</p>
+                </div>
               </div>
             </div>
 
-            <div className="mt-10 rounded-[12px] border border-[var(--color-hairline-strong)] bg-[var(--color-surface-elevated)] p-6">
+            <div className="mt-10 rounded-[18px] border border-[var(--color-hairline)] bg-[var(--color-surface-elevated)] p-6">
               <div className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
                 <div>
                   <p className="text-xs uppercase tracking-[0.28em]" style={{ color: "var(--color-accent-orange)" }}>
                     Email platform
                   </p>
                   <h2
-                    className="mt-3 text-2xl font-medium leading-tight text-[var(--color-ink)] sm:text-3xl"
+                    className="mt-3 text-2xl font-semibold leading-[1.1] tracking-[-0.022em] text-[var(--color-ink)] sm:text-3xl"
                     style={{ fontFamily: "var(--font-display)" }}
                   >
                     Send transactional emails with confidence.
                   </h2>
-                  <p className="mt-4 max-w-2xl text-sm leading-6 text-[var(--color-body)]">
+                  <p className="mt-4 max-w-2xl text-[17px] leading-[1.47] tracking-[-0.022em] text-[var(--color-charcoal)]">
                     Powered by Resend — reliable delivery, simple API, and real-time analytics for your application.
                   </p>
                 </div>
 
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
-                  <div className="rounded-[12px] border border-[var(--color-hairline-strong)] bg-[var(--color-surface-card)] p-5">
+                  <div className="rounded-[18px] border border-[var(--color-hairline)] bg-[var(--color-surface-card)] p-5">
                     <p className="text-[10px] uppercase tracking-[0.28em] text-[var(--color-charcoal)]">
                       Emails sent
                     </p>
-                    <p className="mt-3 text-3xl font-medium text-[var(--color-ink)]" style={{ fontFamily: "var(--font-display)" }}>
+                    <p className="mt-3 text-3xl font-semibold tracking-[-0.022em] text-[var(--color-ink)]" style={{ fontFamily: "var(--font-display)" }}>
                       0
                     </p>
                     <p className="mt-2 text-sm text-[var(--color-charcoal)]">
                       Since last deployment
                     </p>
                   </div>
-                  <div
-                    className="rounded-[12px] border border-[var(--color-hairline-strong)] p-5"
-                    style={{
-                      background: "linear-gradient(135deg, var(--color-accent-orange), var(--color-accent-orange-glow))",
-                    }}
-                  >
-                    <p className="text-[10px] uppercase tracking-[0.28em] text-[var(--color-ink)]/70">
+                  <div className="rounded-[18px] border border-[var(--color-hairline)] bg-[var(--color-primary)] p-5">
+                    <p className="text-[10px] uppercase tracking-[0.28em] text-white/70">
                       Status
                     </p>
-                    <p className="mt-3 text-3xl font-medium text-[var(--color-ink)]" style={{ fontFamily: "var(--font-display)" }}>
+                    <p className="mt-3 text-3xl font-semibold tracking-[-0.022em] text-white" style={{ fontFamily: "var(--font-display)" }}>
                       Live
                     </p>
-                    <p className="mt-2 text-sm text-[var(--color-ink)]/70">
+                    <p className="mt-2 text-sm text-white/70">
                       Connected to your API
                     </p>
                   </div>

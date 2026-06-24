@@ -108,12 +108,12 @@ export default function ComposeModal({
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center">
       <div
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/40"
         onClick={() => onClose(false)}
       />
-      <div className="relative z-10 flex w-full max-w-2xl flex-col rounded-t-[16px] border border-[var(--color-hairline-strong)] bg-[var(--color-surface-elevated)] shadow-2xl sm:mb-0 sm:rounded-[16px]">
+      <div className="relative z-10 flex w-full max-w-2xl flex-col rounded-[18px] border border-[var(--color-hairline)] bg-[var(--color-surface-card)] sm:mb-0">
         <div className="flex items-center justify-between border-b border-[var(--color-hairline)] px-5 py-3">
-          <h3 className="text-sm font-medium text-[var(--color-ink)]">
+          <h3 className="text-sm font-semibold tracking-[-0.022em] text-[var(--color-ink)]">
             New Message
           </h3>
           <button
@@ -139,14 +139,14 @@ export default function ComposeModal({
               <button
                 type="button"
                 onClick={() => setShowCc(!showCc)}
-                className={`text-xs ${showCc ? "text-[var(--color-accent-blue)]" : "text-[var(--color-charcoal)]"} hover:text-[var(--color-ink)]`}
+                className={`text-xs ${showCc ? "text-[var(--color-primary)]" : "text-[var(--color-charcoal)]"} hover:text-[var(--color-ink)]`}
               >
                 Cc
               </button>
               <button
                 type="button"
                 onClick={() => setShowBcc(!showBcc)}
-                className={`text-xs ${showBcc ? "text-[var(--color-accent-blue)]" : "text-[var(--color-charcoal)]"} hover:text-[var(--color-ink)]`}
+                className={`text-xs ${showBcc ? "text-[var(--color-primary)]" : "text-[var(--color-charcoal)]"} hover:text-[var(--color-ink)]`}
               >
                 Bcc
               </button>
@@ -220,7 +220,7 @@ export default function ComposeModal({
             <button
               type="button"
               onClick={() => onClose(false)}
-              className="rounded-[8px] px-4 py-1.5 text-xs text-[var(--color-charcoal)] hover:text-[var(--color-ink)]"
+              className="rounded-[9999px] px-4 py-1.5 text-xs text-[var(--color-charcoal)] hover:text-[var(--color-ink)]"
             >
               Discard
             </button>
@@ -228,7 +228,7 @@ export default function ComposeModal({
               type="button"
               onClick={handleSend}
               disabled={sending}
-              className="rounded-[8px] bg-[var(--color-accent-blue)] px-5 py-1.5 text-xs font-medium text-white transition hover:opacity-90 disabled:opacity-50"
+              className="rounded-[9999px] bg-[var(--color-primary)] px-5 py-1.5 text-xs font-medium text-[var(--color-primary-on)] transition active:scale-[0.95] hover:opacity-90 disabled:opacity-50"
             >
               {sending ? "Sending..." : "Send"}
             </button>

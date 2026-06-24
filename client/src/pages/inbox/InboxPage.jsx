@@ -50,12 +50,12 @@ export default function InboxPage() {
       style={{ backgroundColor: "var(--color-canvas)" }}
       className="flex h-screen flex-col text-[var(--color-ink)]"
     >
-      <header className="flex items-center justify-between border-b border-[var(--color-hairline-strong)] bg-[var(--color-surface-card)] px-5 py-2">
+      <header className="flex items-center justify-between border-b border-[var(--color-hairline)] bg-[var(--color-surface-card)] px-5 py-2.5">
         <div className="flex items-center gap-3">
           <div className="flex h-8 w-8 items-center justify-center rounded-[8px] bg-[var(--color-primary)] text-sm font-medium text-[var(--color-primary-on)]">
             E
           </div>
-          <span className="text-sm font-medium text-[var(--color-ink)]">
+          <span className="text-sm font-semibold tracking-[-0.022em] text-[var(--color-ink)]">
             Email Pro
           </span>
         </div>
@@ -68,7 +68,7 @@ export default function InboxPage() {
           <button
             type="button"
             onClick={handleLogout}
-            className="rounded-[8px] border border-[var(--color-hairline-strong)] bg-[var(--color-surface-elevated)] px-3 py-1.5 text-xs font-medium text-[var(--color-ink)] transition hover:bg-[var(--color-surface-card)]"
+            className="rounded-[8px] border border-[var(--color-hairline)] bg-transparent px-3 py-1.5 text-xs text-[var(--color-charcoal)] transition hover:text-[var(--color-ink)]"
           >
             Logout
           </button>

@@ -111,13 +111,13 @@ export default function EmailList({
             key={thread._id}
             type="button"
             onClick={() => handleSelect(thread._id)}
-            className={`flex flex-col gap-0.5 border-b border-[var(--color-hairline)] px-4 py-3 text-left transition hover:bg-[var(--color-surface-elevated)] ${
+            className={`flex flex-col gap-0.5 border-b border-[var(--color-hairline)] px-5 py-3.5 text-left transition hover:bg-[var(--color-surface-elevated)] ${
               isSelected ? "bg-[var(--color-surface-elevated)]" : ""
-            } ${!thread.isRead ? "bg-[var(--color-surface-card)]" : ""}`}
+            } ${!thread.isRead ? "" : ""}`}
           >
             <div className="flex items-center justify-between">
               <span
-                className={`truncate text-sm ${
+                className={`truncate text-[17px] tracking-[-0.022em] ${
                   !thread.isRead
                     ? "font-semibold text-[var(--color-ink)]"
                     : "text-[var(--color-body)]"
@@ -127,11 +127,11 @@ export default function EmailList({
               </span>
               <div className="flex items-center gap-2">
                 {thread.messageCount > 1 && (
-                  <span className="text-[10px] text-[var(--color-charcoal)]">
+                  <span className="text-xs text-[var(--color-charcoal)]">
                     ({thread.messageCount})
                   </span>
                 )}
-                <span className="whitespace-nowrap text-[11px] text-[var(--color-charcoal)]">
+                <span className="whitespace-nowrap text-xs text-[var(--color-charcoal)]">
                   {formatRelativeTime(thread.lastMessageAt)}
                 </span>
               </div>
@@ -159,7 +159,7 @@ export default function EmailList({
               </span>
             </div>
             {snippet && (
-              <p className="truncate text-xs text-[var(--color-ash)]">
+              <p className="truncate text-sm text-[var(--color-charcoal)]">
                 {snippet}
               </p>
             )}
