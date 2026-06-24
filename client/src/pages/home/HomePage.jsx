@@ -1,18 +1,20 @@
-import { useEffect, useMemo, useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { getCurrentUser, logout } from "../../api/auth";
 
 const TOKEN_KEY = "auth_token";
 
 function StatCard({ label, value, delta }) {
   return (
-    <div className="rounded-3xl border border-white/10 bg-white/5 p-5 backdrop-blur-sm">
-      <p className="text-xs uppercase tracking-[0.24em] text-white/45">
+    <div className="rounded-[12px] border border-[var(--color-hairline-strong)] bg-[var(--color-surface-card)] p-6">
+      <p className="text-xs uppercase tracking-[0.24em] text-[var(--color-charcoal)]">
         {label}
       </p>
-      <div className="mt-3 flex items-end justify-between gap-4">
-        <span className="text-3xl font-semibold text-white">{value}</span>
-        <span className="rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 text-xs font-semibold text-emerald-300">
+      <div className="mt-4 flex items-end justify-between gap-4">
+        <span className="text-3xl font-medium text-[var(--color-ink)]" style={{ fontFamily: "var(--font-display)" }}>
+          {value}
+        </span>
+        <span className="rounded-full border border-[var(--color-accent-green)]/20 bg-[var(--color-accent-green)]/10 px-2.5 py-1 text-xs font-medium text-[var(--color-accent-green)]">
           {delta}
         </span>
       </div>
@@ -20,16 +22,15 @@ function StatCard({ label, value, delta }) {
   );
 }
 
-function MiniCard({
-  title,
-  subtitle,
-  accent = "from-fuchsia-500 to-violet-500",
-}) {
+function MiniCard({ title, subtitle, accent }) {
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-white/90 shadow-[0_20px_60px_rgba(0,0,0,0.18)] backdrop-blur-sm">
-      <div className={`h-2 w-16 rounded-full bg-linear-to-r ${accent}`} />
-      <p className="mt-4 text-sm font-medium">{title}</p>
-      <p className="mt-1 text-xs text-white/55">{subtitle}</p>
+    <div className="rounded-[12px] border border-[var(--color-hairline-strong)] bg-[var(--color-surface-card)] p-5">
+      <div
+        className="h-1.5 w-12 rounded-full"
+        style={{ background: accent || "linear-gradient(90deg, var(--color-accent-blue), var(--color-accent-green))" }}
+      />
+      <p className="mt-4 text-sm font-medium text-[var(--color-ink)]">{title}</p>
+      <p className="mt-1 text-xs text-[var(--color-charcoal)]">{subtitle}</p>
     </div>
   );
 }
@@ -39,7 +40,7 @@ export default function HomePage() {
   const token = localStorage.getItem(TOKEN_KEY);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [status, setStatus] = useState("Loading home...");
+  const [status, setStatus] = useState("Dashboard");
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -53,220 +54,208 @@ export default function HomePage() {
     const loadUser = async () => {
       try {
         const data = await getCurrentUser(token);
-        if (!isMounted) {
-          return;
-        }
+        if (!isMounted) return;
         setUser(data.user);
         setStatus("Welcome back");
       } catch (err) {
         localStorage.removeItem(TOKEN_KEY);
-        if (!isMounted) {
-          return;
-        }
+        if (!isMounted) return;
         setError(err.message || "Session expired");
         navigate("/auth", { replace: true });
       } finally {
-        if (isMounted) {
-          setLoading(false);
-        }
+        if (isMounted) setLoading(false);
       }
     };
 
     loadUser();
 
-    return () => {
-      isMounted = false;
-    };
+    return () => { isMounted = false; };
   }, [navigate, token]);
-
-  const greeting = useMemo(() => {
-    if (!user) {
-      return "";
-    }
-    return `Hi, ${user.name}`;
-  }, [user]);
 
   const handleLogout = async () => {
     try {
       await logout();
     } catch {
-      // ignore network failures on logout
+      // ignore
     }
-
     localStorage.removeItem(TOKEN_KEY);
     navigate("/auth", { replace: true });
   };
 
   if (!token) {
-    return <Navigate to="/auth" replace />;
+    return null;
   }
 
   return (
-    <main className="min-h-screen overflow-hidden bg-[#13112b] text-white">
-      <div className="mx-auto flex min-h-screen max-w-400 flex-col px-4 pb-6 pt-4 sm:px-6 lg:px-8">
-        <header className="flex items-center justify-between gap-4 rounded-full border border-white/10 bg-white/5 px-5 py-4 backdrop-blur-sm">
+    <main style={{ backgroundColor: "var(--color-canvas)" }} className="min-h-screen text-[var(--color-ink)]">
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(ellipse 80% 50% at 50% 0%, var(--color-accent-blue-glow), transparent 70%)",
+        }}
+      />
+
+      <div className="relative mx-auto flex min-h-screen max-w-6xl flex-col px-4 pb-6 pt-4 sm:px-6 lg:px-8">
+        <header className="flex items-center justify-between gap-4 rounded-full border border-[var(--color-hairline-strong)] bg-[var(--color-surface-card)] px-5 py-3">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-[#13112b] shadow-lg">
-              <span className="text-lg font-black">J</span>
+            <div className="flex h-9 w-9 items-center justify-center rounded-[8px] bg-[var(--color-primary)] text-sm font-medium text-[var(--color-primary-on)]">
+              E
             </div>
             <div>
-              <p className="text-sm font-semibold tracking-wide">Justis</p>
-              <p className="text-[11px] uppercase tracking-[0.3em] text-white/45">
-                Design system
+              <p className="text-sm font-medium text-[var(--color-ink)]">Email Pro</p>
+              <p className="text-[10px] uppercase tracking-[0.3em] text-[var(--color-charcoal)]">
+                Dashboard
               </p>
             </div>
           </div>
 
-          <nav className="hidden items-center gap-8 text-sm text-white/70 md:flex">
-            <a href="#courses" className="transition hover:text-white">
-              Courses
-            </a>
-            <a href="#about" className="transition hover:text-white">
-              About Us
-            </a>
-            <a href="#blog" className="transition hover:text-white">
-              Blog
-            </a>
-            <a href="#projects" className="transition hover:text-white">
-              Projects
-            </a>
+          <nav className="hidden items-center gap-6 text-sm text-[var(--color-charcoal)] md:flex">
+            <span className="transition hover:text-[var(--color-ink)] cursor-pointer">Overview</span>
+            <span className="transition hover:text-[var(--color-ink)] cursor-pointer">Analytics</span>
+            <span className="transition hover:text-[var(--color-ink)] cursor-pointer">Settings</span>
           </nav>
 
           <button
             type="button"
             onClick={handleLogout}
-            className="rounded-full border border-white/15 px-5 py-2 text-sm font-semibold text-white/90 transition hover:bg-white hover:text-[#13112b]"
+            className="h-9 rounded-[8px] border border-[var(--color-hairline-strong)] bg-[var(--color-surface-elevated)] px-4 text-sm font-medium text-[var(--color-ink)] transition hover:bg-[var(--color-surface-card)]"
           >
             Logout
           </button>
         </header>
 
-        <section className="relative mt-6 flex flex-1 flex-col overflow-hidden rounded-4xl border border-white/10 bg-[#191636] shadow-[0_50px_120px_rgba(0,0,0,0.35)]">
-          <div className="absolute inset-0 opacity-70">
-            <div className="absolute left-1/2 top-0 h-full w-[28%] -translate-x-1/2 bg-[linear-gradient(180deg,rgba(165,180,252,0.95)_0%,rgba(232,121,249,0.92)_28%,rgba(251,146,60,0.82)_62%,rgba(253,224,71,0.92)_100%)] blur-[0.5px]" />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.06),transparent_30%),linear-gradient(to_right,transparent_0%,rgba(255,255,255,0.04)_50%,transparent_100%)]" />
-            <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-size-[120px_120px] opacity-30" />
-          </div>
-
-          <div className="relative flex flex-1 flex-col justify-between px-4 py-8 sm:px-8 lg:px-14 lg:py-10">
+        <div
+          className="relative mt-8 flex-1 overflow-hidden rounded-[12px] border border-[var(--color-hairline-strong)] bg-[var(--color-surface-card)]"
+          style={{
+            background:
+              "radial-gradient(ellipse 60% 40% at 30% 20%, var(--color-accent-orange-glow), transparent 60%), radial-gradient(ellipse 40% 30% at 80% 80%, var(--color-accent-green-glow), transparent 50%)",
+          }}
+        >
+          <div className="relative flex flex-col justify-between px-6 py-8 sm:px-10 lg:px-14 lg:py-10">
             <div className="flex flex-col items-center text-center">
-              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs uppercase tracking-[0.3em] text-white/55">
-                <span className="h-2 w-2 rounded-full bg-fuchsia-300 shadow-[0_0_18px_rgba(232,121,249,0.8)]" />
+              <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[var(--color-hairline)] bg-[var(--color-surface-elevated)] px-3.5 py-1.5 text-xs uppercase tracking-[0.3em] text-[var(--color-charcoal)]">
+                <span className="h-2 w-2 rounded-full" style={{ backgroundColor: "var(--color-accent-green)" }} />
                 {status}
               </div>
 
-              <div className="relative w-full max-w-6xl">
-                <p className="select-none text-[clamp(3.6rem,13vw,9rem)] font-black uppercase leading-none tracking-[-0.08em] text-white/95 sm:text-[clamp(4.5rem,12vw,10rem)]">
-                  Design
-                </p>
-                <p className="select-none text-[clamp(3.6rem,13vw,9rem)] font-black uppercase leading-none tracking-[-0.08em] text-white/65 sm:text-[clamp(4.5rem,12vw,10rem)]">
-                  System
+              <div className="relative w-full max-w-4xl">
+                <p
+                  className="select-none text-[clamp(2.5rem,10vw,6rem)] font-normal leading-none tracking-[-0.03em] text-[var(--color-ink)]"
+                  style={{ fontFamily: "var(--font-display)" }}
+                >
+                  {user ? `Hi, ${user.name}` : "Dashboard"}
                 </p>
 
-                <div className="absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/30 bg-white/5 p-5 backdrop-blur-sm lg:block">
-                  <div className="flex h-14 w-14 items-center justify-center rounded-full border border-white/30 text-2xl text-white">
-                    ◦
-                  </div>
-                </div>
+                <p className="mt-3 max-w-xl text-sm tracking-[0.2em] text-[var(--color-body)]">
+                  Manage your email infrastructure
+                </p>
+
+                {error ? (
+                  <p className="mt-4 inline-block rounded-full border border-[var(--color-accent-red)]/20 bg-[var(--color-accent-red)]/10 px-4 py-2 text-sm text-[var(--color-accent-red)]">
+                    {error}
+                  </p>
+                ) : null}
+
+                <button
+                  type="button"
+                  onClick={() => navigate("/inbox")}
+                  className="mt-8 h-9 rounded-[8px] bg-[var(--color-primary)] px-6 text-sm font-medium text-[var(--color-primary-on)] transition hover:bg-[var(--color-body)]"
+                >
+                  Go to Inbox
+                </button>
               </div>
-
-              <p className="mt-3 max-w-xl text-sm tracking-[0.28em] text-white/70 sm:text-base">
-                Design systems for enterprises
-              </p>
-
-              {error ? (
-                <p className="mt-4 rounded-full border border-rose-400/20 bg-rose-400/10 px-4 py-2 text-sm text-rose-200">
-                  {error}
-                </p>
-              ) : null}
-
-              <button
-                type="button"
-                className="mt-10 rounded-full bg-white px-8 py-4 text-sm font-bold uppercase tracking-[0.18em] text-[#191636] shadow-[0_22px_60px_rgba(255,255,255,0.18)] transition hover:-translate-y-px hover:bg-fuchsia-50"
-                disabled={loading}
-              >
-                Let&apos;s start
-              </button>
             </div>
 
             <div className="mt-12 grid gap-4 lg:grid-cols-[1fr_auto_1fr] lg:items-end">
               <div className="grid gap-4 sm:grid-cols-2">
                 <MiniCard
-                  title="Product"
-                  subtitle="Motion, typography, and color tokens"
-                  accent="from-amber-300 to-fuchsia-400"
+                  title="Email Delivery"
+                  subtitle="99.9% deliverability rate"
+                  accent="linear-gradient(90deg, var(--color-accent-orange), var(--color-accent-orange))"
                 />
                 <MiniCard
-                  title="Components"
-                  subtitle="Cards, buttons, forms, and layouts"
-                  accent="from-cyan-300 to-indigo-500"
+                  title="Analytics"
+                  subtitle="Real-time tracking and insights"
+                  accent="linear-gradient(90deg, var(--color-accent-blue), var(--color-accent-blue))"
                 />
               </div>
 
-              <div className="mx-auto hidden h-40 w-40 items-center justify-center rounded-full border border-white/10 bg-white/5 text-center text-sm text-white/70 shadow-[0_20px_80px_rgba(0,0,0,0.3)] lg:flex">
+              <div className="mx-auto hidden h-32 w-32 items-center justify-center rounded-full border border-[var(--color-hairline-strong)] bg-[var(--color-surface-elevated)] text-center text-sm text-[var(--color-charcoal)] lg:flex">
                 <div>
-                  <p className="text-4xl font-black text-white">#1</p>
-                  <p className="mt-1 text-xs uppercase tracking-[0.3em] text-white/45">
-                    Design
+                  <p className="text-3xl font-medium text-[var(--color-ink)]" style={{ fontFamily: "var(--font-display)" }}>
+                    #1
+                  </p>
+                  <p className="mt-1 text-[10px] uppercase tracking-[0.3em] text-[var(--color-charcoal)]">
+                    Rated
                   </p>
                 </div>
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2 lg:justify-self-end">
                 <MiniCard
-                  title={greeting || "Welcome"}
-                  subtitle={user ? user.email : "Signed in user"}
-                  accent="from-violet-400 to-fuchsia-500"
+                  title={user?.name || "Welcome"}
+                  subtitle={user?.email || "Signed in user"}
+                  accent="linear-gradient(90deg, var(--color-accent-green), var(--color-accent-green))"
                 />
                 <MiniCard
                   title="Team"
-                  subtitle="1,000+ designers are already working with us"
-                  accent="from-emerald-300 to-cyan-400"
+                  subtitle="Collaborate with your team"
+                  accent="linear-gradient(90deg, var(--color-accent-blue), var(--color-accent-green))"
                 />
               </div>
             </div>
 
-            <div className="mt-10 rounded-[28px] border border-white/10 bg-white/95 p-6 text-[#13112b] shadow-[0_30px_80px_rgba(0,0,0,0.25)]">
+            <div className="mt-10 rounded-[12px] border border-[var(--color-hairline-strong)] bg-[var(--color-surface-elevated)] p-6">
               <div className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
                 <div>
-                  <p className="text-sm font-semibold uppercase tracking-[0.28em] text-fuchsia-500">
-                    The ultimate library
+                  <p className="text-xs uppercase tracking-[0.28em]" style={{ color: "var(--color-accent-orange)" }}>
+                    Email platform
                   </p>
-                  <h2 className="mt-3 text-3xl font-black leading-tight text-[#1c1b38] sm:text-4xl">
-                    Build elegant auth and landing pages with the same design
-                    language.
+                  <h2
+                    className="mt-3 text-2xl font-medium leading-tight text-[var(--color-ink)] sm:text-3xl"
+                    style={{ fontFamily: "var(--font-display)" }}
+                  >
+                    Send transactional emails with confidence.
                   </h2>
-                  <p className="mt-4 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
-                    This home page mirrors the visual feel of your reference:
-                    dark canvas, bold hero typography, floating information
-                    cards, and a premium product landing layout.
+                  <p className="mt-4 max-w-2xl text-sm leading-6 text-[var(--color-body)]">
+                    Powered by Resend — reliable delivery, simple API, and real-time analytics for your application.
                   </p>
                 </div>
 
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
-                  <div className="rounded-3xl bg-[#191636] p-5 text-white shadow-lg">
-                    <p className="text-xs uppercase tracking-[0.28em] text-white/45">
-                      Sections
+                  <div className="rounded-[12px] border border-[var(--color-hairline-strong)] bg-[var(--color-surface-card)] p-5">
+                    <p className="text-[10px] uppercase tracking-[0.28em] text-[var(--color-charcoal)]">
+                      Emails sent
                     </p>
-                    <p className="mt-3 text-3xl font-black">04</p>
-                    <p className="mt-2 text-sm text-white/70">
-                      Home, auth, routing, dashboard.
+                    <p className="mt-3 text-3xl font-medium text-[var(--color-ink)]" style={{ fontFamily: "var(--font-display)" }}>
+                      0
+                    </p>
+                    <p className="mt-2 text-sm text-[var(--color-charcoal)]">
+                      Since last deployment
                     </p>
                   </div>
-                  <div className="rounded-3xl bg-linear-to-br from-violet-500 to-fuchsia-400 p-5 text-white shadow-lg">
-                    <p className="text-xs uppercase tracking-[0.28em] text-white/80">
+                  <div
+                    className="rounded-[12px] border border-[var(--color-hairline-strong)] p-5"
+                    style={{
+                      background: "linear-gradient(135deg, var(--color-accent-orange), var(--color-accent-orange-glow))",
+                    }}
+                  >
+                    <p className="text-[10px] uppercase tracking-[0.28em] text-[var(--color-ink)]/70">
                       Status
                     </p>
-                    <p className="mt-3 text-3xl font-black">Live</p>
-                    <p className="mt-2 text-sm text-white/80">
-                      Connected to your MERN auth API.
+                    <p className="mt-3 text-3xl font-medium text-[var(--color-ink)]" style={{ fontFamily: "var(--font-display)" }}>
+                      Live
+                    </p>
+                    <p className="mt-2 text-sm text-[var(--color-ink)]/70">
+                      Connected to your API
                     </p>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </section>
+        </div>
       </div>
     </main>
   );

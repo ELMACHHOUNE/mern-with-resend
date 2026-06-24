@@ -6,13 +6,39 @@ import { getCurrentUser, logout, signin, signup, verifyEmail, resendCode, forgot
 
 const TOKEN_KEY = "auth_token";
 
+function PageShell({ children }) {
+  return (
+    <main
+      className="min-h-screen"
+      style={{ backgroundColor: "var(--color-canvas)" }}
+    >
+      <div className="mx-auto flex min-h-screen max-w-6xl flex-col gap-6 p-4 sm:grid sm:grid-cols-[1.1fr_0.9fr] sm:p-6">
+        <AuthIllustration />
+        {children}
+      </div>
+    </main>
+  );
+}
+
+function AuthCard({ children, compact }) {
+  return (
+    <div
+      className={`rounded-[12px] border border-[var(--color-hairline-strong)] bg-[var(--color-surface-card)] p-8 ${
+        compact ? "text-center" : ""
+      }`}
+    >
+      {children}
+    </div>
+  );
+}
+
 export default function AuthPage() {
   const navigate = useNavigate();
   const [mode, setMode] = useState("signin");
   const [token, setToken] = useState(localStorage.getItem(TOKEN_KEY) || "");
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [status, setStatus] = useState("Ready");
+  const [status, setStatus] = useState("");
   const [error, setError] = useState("");
   const [formData, setFormData] = useState({
     name: "",
@@ -22,9 +48,7 @@ export default function AuthPage() {
   const [verificationCode, setVerificationCode] = useState("");
 
   useEffect(() => {
-    if (!token) {
-      return;
-    }
+    if (!token) return;
 
     const loadCurrentUser = async () => {
       try {
@@ -43,10 +67,7 @@ export default function AuthPage() {
   }, [navigate, token]);
 
   const greeting = useMemo(() => {
-    if (!user) {
-      return null;
-    }
-
+    if (!user) return null;
     return {
       title: `Hello, ${user.name}`,
       subtitle: "Your account is active and ready.",
@@ -86,7 +107,7 @@ export default function AuthPage() {
       }
     } catch (err) {
       setError(err.message || "Authentication failed");
-      setStatus("Ready");
+      setStatus("");
     } finally {
       setLoading(false);
     }
@@ -105,7 +126,7 @@ export default function AuthPage() {
       setMode("verified");
     } catch (err) {
       setError(err.message || "Verification failed");
-      setStatus("Ready");
+      setStatus("");
     } finally {
       setLoading(false);
     }
@@ -139,7 +160,7 @@ export default function AuthPage() {
       setMode("reset-code");
     } catch (err) {
       setError(err.message || "Failed to send reset code");
-      setStatus("Ready");
+      setStatus("");
     } finally {
       setLoading(false);
     }
@@ -159,7 +180,7 @@ export default function AuthPage() {
       setMode("password-reset");
     } catch (err) {
       setError(err.message || "Failed to reset password");
-      setStatus("Ready");
+      setStatus("");
     } finally {
       setLoading(false);
     }
@@ -184,30 +205,26 @@ export default function AuthPage() {
 
   if (user) {
     return (
-      <main className="min-h-screen bg-linear-to-br from-slate-100 via-white to-indigo-100 p-4 sm:p-6">
-        <section className="mx-auto grid min-h-[calc(100vh-2rem)] max-w-6xl items-center gap-6 rounded-4xl border border-white/70 bg-white/80 p-4 shadow-[0_30px_90px_rgba(15,23,42,0.08)] backdrop-blur-sm sm:min-h-[calc(100vh-3rem)] sm:grid-cols-[1.1fr_0.9fr] sm:p-6">
+      <main className="min-h-screen" style={{ backgroundColor: "var(--color-canvas)" }}>
+        <div className="mx-auto flex min-h-[calc(100vh-2rem)] max-w-6xl items-center gap-6 p-4 sm:grid sm:grid-cols-[1.1fr_0.9fr] sm:p-6">
           <AuthIllustration />
-
-          <div className="rounded-4xl bg-white p-6 shadow-[0_30px_90px_rgba(15,23,42,0.12)] sm:p-8">
-            <div className="inline-flex rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-600">
+          <AuthCard>
+            <div className="inline-flex rounded-full border border-[var(--color-hairline)] bg-[var(--color-surface-elevated)] px-3 py-1 text-xs text-[var(--color-accent-green)]">
               Authenticated
             </div>
-            <h1 className="mt-5 text-3xl font-semibold tracking-tight text-slate-900">
+            <h1
+              className="mt-5 text-3xl font-medium leading-none tracking-tight text-[var(--color-ink)]"
+              style={{ fontFamily: "var(--font-display)" }}
+            >
               {greeting.title}
             </h1>
-            <p className="mt-2 text-sm text-slate-500">{greeting.subtitle}</p>
+            <p className="mt-2 text-sm text-[var(--color-body)]">{greeting.subtitle}</p>
 
-            <div className="mt-8 rounded-3xl border border-slate-100 bg-slate-50 p-5">
-              <p className="text-sm font-medium text-slate-700">Current user</p>
-              <div className="mt-4 space-y-2 text-sm text-slate-600">
-                <p>
-                  <span className="font-medium text-slate-900">Name:</span>{" "}
-                  {user.name}
-                </p>
-                <p>
-                  <span className="font-medium text-slate-900">Email:</span>{" "}
-                  {user.email}
-                </p>
+            <div className="mt-8 rounded-[8px] border border-[var(--color-hairline)] bg-[var(--color-surface-elevated)] p-5">
+              <p className="text-sm font-medium text-[var(--color-charcoal)]">Current user</p>
+              <div className="mt-4 space-y-2 text-sm text-[var(--color-body)]">
+                <p><span className="font-medium text-[var(--color-ink)]">Name:</span> {user.name}</p>
+                <p><span className="font-medium text-[var(--color-ink)]">Email:</span> {user.email}</p>
               </div>
             </div>
 
@@ -215,272 +232,259 @@ export default function AuthPage() {
               type="button"
               onClick={onLogout}
               disabled={loading}
-              className="mt-6 w-full rounded-2xl bg-slate-900 px-4 py-3.5 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-70"
+              className="mt-6 h-9 w-full rounded-[8px] bg-[var(--color-primary)] px-4 text-sm font-medium text-[var(--color-primary-on)] transition hover:bg-[var(--color-body)] disabled:cursor-not-allowed disabled:opacity-50"
             >
               {loading ? "Logging out..." : "Logout"}
             </button>
-          </div>
-        </section>
+          </AuthCard>
+        </div>
       </main>
     );
   }
 
   if (mode === "verification-sent" || mode === "verified") {
     return (
-      <main className="min-h-screen bg-linear-to-br from-slate-100 via-white to-indigo-100 p-4 sm:p-6">
-        <section className="mx-auto grid min-h-[calc(100vh-2rem)] max-w-6xl gap-6 rounded-4xl border border-white/70 bg-white/80 p-4 shadow-[0_30px_90px_rgba(15,23,42,0.08)] backdrop-blur-sm sm:min-h-[calc(100vh-3rem)] sm:grid-cols-[1.1fr_0.9fr] sm:p-6">
-          <AuthIllustration />
+      <PageShell>
+        <AuthCard compact>
+          {mode === "verified" ? (
+            <>
+              <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-[var(--color-accent-green)]/10 text-lg text-[var(--color-accent-green)]">
+                ✓
+              </div>
+              <h1 className="text-xl font-medium text-[var(--color-ink)]" style={{ fontFamily: "var(--font-display)" }}>
+                Email verified!
+              </h1>
+              <p className="mt-2 text-sm text-[var(--color-body)]">{status}</p>
+              <button
+                type="button"
+                onClick={() => setMode("signin")}
+                className="mt-6 h-9 w-full rounded-[8px] bg-[var(--color-primary)] px-4 text-sm font-medium text-[var(--color-primary-on)] transition hover:bg-[var(--color-body)]"
+              >
+                Go to sign in
+              </button>
+            </>
+          ) : (
+            <>
+              <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-[var(--color-accent-blue)]/10 text-lg text-[var(--color-accent-blue)]">
+                ✉
+              </div>
+              <h1 className="text-xl font-medium text-[var(--color-ink)]" style={{ fontFamily: "var(--font-display)" }}>
+                Check your email
+              </h1>
+              <p className="mt-2 text-sm text-[var(--color-body)]">
+                Enter the email and the 6-digit code we sent to activate your account.
+              </p>
 
-          <div className="rounded-[2rem] bg-white p-6 text-center shadow-[0_30px_90px_rgba(15,23,42,0.12)] sm:p-8">
-            {mode === "verified" ? (
-              <>
-                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 text-2xl text-emerald-600">
-                  ✓
-                </div>
-                <h1 className="text-xl font-semibold text-slate-900">Email verified!</h1>
-                <p className="mt-2 text-sm text-slate-500">{status}</p>
+              <form onSubmit={onVerifyCode} className="mt-6 space-y-4 text-left">
+                <input
+                  type="email"
+                  placeholder="your@email.com"
+                  value={formData.email}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
+                  className="h-10 w-full rounded-[8px] border border-[var(--color-hairline-strong)] bg-[var(--color-surface-card)] px-3.5 py-2.5 text-sm text-[var(--color-ink)] outline-none transition placeholder:text-[var(--color-stone)] focus:border-[var(--color-ink)]"
+                  required
+                />
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={6}
+                  placeholder="000000"
+                  value={verificationCode}
+                  onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                  className="h-10 w-full rounded-[8px] border border-[var(--color-hairline-strong)] bg-[var(--color-surface-card)] px-3.5 py-2.5 text-center text-2xl tracking-[0.5em] text-[var(--color-ink)] outline-none transition placeholder:text-[var(--color-stone)] focus:border-[var(--color-ink)]"
+                  required
+                />
+
+                {error ? (
+                  <p className="rounded-[8px] border border-[var(--color-accent-red)]/20 bg-[var(--color-accent-red)]/10 px-4 py-3 text-sm text-[var(--color-accent-red)]">{error}</p>
+                ) : null}
+
                 <button
-                  type="button"
-                  onClick={() => setMode("signin")}
-                  className="mt-6 w-full rounded-2xl bg-indigo-600 px-4 py-3.5 text-sm font-semibold text-white transition hover:bg-indigo-500"
+                  type="submit"
+                  disabled={loading || !formData.email || verificationCode.length < 6}
+                  className="h-9 w-full rounded-[8px] bg-[var(--color-primary)] px-4 text-sm font-medium text-[var(--color-primary-on)] transition hover:bg-[var(--color-body)] disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  Go to sign in
+                  {loading ? "Verifying..." : "Verify email"}
                 </button>
-              </>
-            ) : (
-              <>
-                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-indigo-100 text-2xl text-indigo-600">
-                  ✉
-                </div>
-                <h1 className="text-xl font-semibold text-slate-900">
-                  Check your email
-                </h1>
-                <p className="mt-2 text-sm text-slate-500">
-                  Enter the email and the 6-digit code we sent to activate your account.
-                </p>
+              </form>
 
-                <form onSubmit={onVerifyCode} className="mt-6 space-y-4">
-                  <input
-                    type="email"
-                    placeholder="your@email.com"
-                    value={formData.email}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
-                    className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-300 focus:bg-white"
-                    required
-                  />
-                  <input
-                    type="text"
-                    inputMode="numeric"
-                    maxLength={6}
-                    placeholder="000000"
-                    value={verificationCode}
-                    onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                    className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-center text-2xl tracking-[8px] text-slate-900 outline-none transition placeholder:text-slate-300 focus:border-indigo-300 focus:bg-white"
-                    required
-                  />
-
-                  {error ? (
-                    <p className="rounded-2xl border border-rose-100 bg-rose-50 px-4 py-3 text-sm text-rose-600">
-                      {error}
-                    </p>
-                  ) : null}
-
-                  <button
-                    type="submit"
-                    disabled={loading || !formData.email || verificationCode.length < 6}
-                    className="w-full rounded-2xl bg-indigo-600 px-4 py-3.5 text-sm font-semibold text-white shadow-[0_18px_40px_rgba(79,70,229,0.22)] transition hover:bg-indigo-500 disabled:cursor-not-allowed disabled:opacity-70"
-                  >
-                    {loading ? "Verifying..." : "Verify email"}
-                  </button>
-                </form>
-
+              <div className="mt-4 flex flex-col items-center gap-1">
                 <button
                   type="button"
                   onClick={onResendCode}
                   disabled={loading}
-                  className="mt-4 text-sm text-indigo-600 hover:text-indigo-500 disabled:opacity-50"
+                  className="text-sm text-[var(--color-link)] transition hover:text-[var(--color-accent-blue)] disabled:opacity-50"
                 >
                   {loading ? "Sending..." : "Resend code"}
                 </button>
-
                 <button
                   type="button"
                   onClick={() => setMode("signin")}
-                  className="mt-2 text-sm text-slate-500 hover:text-indigo-600"
+                  className="text-sm text-[var(--color-charcoal)] transition hover:text-[var(--color-ink)]"
                 >
                   Back to sign in
                 </button>
-              </>
-            )}
-          </div>
-        </section>
-      </main>
+              </div>
+            </>
+          )}
+        </AuthCard>
+      </PageShell>
     );
   }
 
   if (mode === "forgot-password") {
     return (
-      <main className="min-h-screen bg-linear-to-br from-slate-100 via-white to-indigo-100 p-4 sm:p-6">
-        <section className="mx-auto grid min-h-[calc(100vh-2rem)] max-w-6xl gap-6 rounded-4xl border border-white/70 bg-white/80 p-4 shadow-[0_30px_90px_rgba(15,23,42,0.08)] backdrop-blur-sm sm:min-h-[calc(100vh-3rem)] sm:grid-cols-[1.1fr_0.9fr] sm:p-6">
-          <AuthIllustration />
+      <PageShell>
+        <AuthCard compact>
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-[var(--color-accent-orange)]/10 text-lg text-[var(--color-accent-orange)]">
+            ?
+          </div>
+          <h1 className="text-xl font-medium text-[var(--color-ink)]" style={{ fontFamily: "var(--font-display)" }}>
+            Forgot password
+          </h1>
+          <p className="mt-2 text-sm text-[var(--color-body)]">
+            Enter your email and we'll send you a reset code.
+          </p>
 
-          <div className="rounded-[2rem] bg-white p-6 shadow-[0_30px_90px_rgba(15,23,42,0.12)] sm:p-8">
-            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-indigo-100 text-2xl text-indigo-600">
-              ?
-            </div>
-            <h1 className="text-xl font-semibold text-slate-900">Forgot password</h1>
-            <p className="mt-2 text-sm text-slate-500">
-              Enter your email and we'll send you a reset code.
-            </p>
+          <form onSubmit={onForgotPassword} className="mt-6 space-y-4 text-left">
+            <input
+              type="email"
+              placeholder="your@email.com"
+              value={formData.email}
+              onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
+              className="h-10 w-full rounded-[8px] border border-[var(--color-hairline-strong)] bg-[var(--color-surface-card)] px-3.5 py-2.5 text-sm text-[var(--color-ink)] outline-none transition placeholder:text-[var(--color-stone)] focus:border-[var(--color-ink)]"
+              required
+            />
 
-            <form onSubmit={onForgotPassword} className="mt-6 space-y-4">
-              <input
-                type="email"
-                placeholder="your@email.com"
-                value={formData.email}
-                onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
-                className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-300 focus:bg-white"
-                required
-              />
-
-              {error ? (
-                <p className="rounded-2xl border border-rose-100 bg-rose-50 px-4 py-3 text-sm text-rose-600">{error}</p>
-              ) : null}
-
-              <button
-                type="submit"
-                disabled={loading || !formData.email}
-                className="w-full rounded-2xl bg-indigo-600 px-4 py-3.5 text-sm font-semibold text-white shadow-[0_18px_40px_rgba(79,70,229,0.22)] transition hover:bg-indigo-500 disabled:cursor-not-allowed disabled:opacity-70"
-              >
-                {loading ? "Sending..." : "Send reset code"}
-              </button>
-            </form>
+            {error ? (
+              <p className="rounded-[8px] border border-[var(--color-accent-red)]/20 bg-[var(--color-accent-red)]/10 px-4 py-3 text-sm text-[var(--color-accent-red)]">{error}</p>
+            ) : null}
 
             <button
-              type="button"
-              onClick={() => setMode("signin")}
-              className="mt-4 text-sm text-slate-500 hover:text-indigo-600"
+              type="submit"
+              disabled={loading || !formData.email}
+              className="h-9 w-full rounded-[8px] bg-[var(--color-primary)] px-4 text-sm font-medium text-[var(--color-primary-on)] transition hover:bg-[var(--color-body)] disabled:cursor-not-allowed disabled:opacity-50"
             >
-              Back to sign in
+              {loading ? "Sending..." : "Send reset code"}
             </button>
-          </div>
-        </section>
-      </main>
+          </form>
+
+          <button
+            type="button"
+            onClick={() => setMode("signin")}
+            className="mt-4 text-sm text-[var(--color-charcoal)] transition hover:text-[var(--color-ink)]"
+          >
+            Back to sign in
+          </button>
+        </AuthCard>
+      </PageShell>
     );
   }
 
   if (mode === "reset-code") {
     return (
-      <main className="min-h-screen bg-linear-to-br from-slate-100 via-white to-indigo-100 p-4 sm:p-6">
-        <section className="mx-auto grid min-h-[calc(100vh-2rem)] max-w-6xl gap-6 rounded-4xl border border-white/70 bg-white/80 p-4 shadow-[0_30px_90px_rgba(15,23,42,0.08)] backdrop-blur-sm sm:min-h-[calc(100vh-3rem)] sm:grid-cols-[1.1fr_0.9fr] sm:p-6">
-          <AuthIllustration />
+      <PageShell>
+        <AuthCard compact>
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-[var(--color-accent-blue)]/10 text-lg text-[var(--color-accent-blue)]">
+            ✉
+          </div>
+          <h1 className="text-xl font-medium text-[var(--color-ink)]" style={{ fontFamily: "var(--font-display)" }}>
+            Reset code sent
+          </h1>
+          <p className="mt-2 text-sm text-[var(--color-body)]">
+            Enter the code from your email and your new password.
+          </p>
 
-          <div className="rounded-[2rem] bg-white p-6 shadow-[0_30px_90px_rgba(15,23,42,0.12)] sm:p-8">
-            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-indigo-100 text-2xl text-indigo-600">
-              ✉
-            </div>
-            <h1 className="text-xl font-semibold text-slate-900">Reset code sent</h1>
-            <p className="mt-2 text-sm text-slate-500">
-              Enter the code from your email and your new password.
-            </p>
+          <form onSubmit={onResetPassword} className="mt-6 space-y-4 text-left">
+            <input
+              type="email"
+              placeholder="your@email.com"
+              value={formData.email}
+              onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
+              className="h-10 w-full rounded-[8px] border border-[var(--color-hairline-strong)] bg-[var(--color-surface-card)] px-3.5 py-2.5 text-sm text-[var(--color-ink)] outline-none transition placeholder:text-[var(--color-stone)] focus:border-[var(--color-ink)]"
+              required
+            />
+            <input
+              type="text"
+              inputMode="numeric"
+              maxLength={6}
+              placeholder="000000"
+              value={verificationCode}
+              onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+              className="h-10 w-full rounded-[8px] border border-[var(--color-hairline-strong)] bg-[var(--color-surface-card)] px-3.5 py-2.5 text-center text-2xl tracking-[0.5em] text-[var(--color-ink)] outline-none transition placeholder:text-[var(--color-stone)] focus:border-[var(--color-ink)]"
+              required
+            />
+            <input
+              type="password"
+              name="password"
+              placeholder="New password"
+              value={formData.password}
+              onChange={onInputChange}
+              className="h-10 w-full rounded-[8px] border border-[var(--color-hairline-strong)] bg-[var(--color-surface-card)] px-3.5 py-2.5 text-sm text-[var(--color-ink)] outline-none transition placeholder:text-[var(--color-stone)] focus:border-[var(--color-ink)]"
+              required
+              minLength={6}
+            />
 
-            <form onSubmit={onResetPassword} className="mt-6 space-y-4">
-              <input
-                type="email"
-                placeholder="your@email.com"
-                value={formData.email}
-                onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
-                className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-300 focus:bg-white"
-                required
-              />
-              <input
-                type="text"
-                inputMode="numeric"
-                maxLength={6}
-                placeholder="000000"
-                value={verificationCode}
-                onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-center text-2xl tracking-[8px] text-slate-900 outline-none transition placeholder:text-slate-300 focus:border-indigo-300 focus:bg-white"
-                required
-              />
-              <input
-                type="password"
-                name="password"
-                placeholder="New password"
-                value={formData.password}
-                onChange={onInputChange}
-                className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-300 focus:bg-white"
-                required
-                minLength={6}
-              />
-
-              {error ? (
-                <p className="rounded-2xl border border-rose-100 bg-rose-50 px-4 py-3 text-sm text-rose-600">{error}</p>
-              ) : null}
-
-              <button
-                type="submit"
-                disabled={loading || !formData.email || verificationCode.length < 6 || !formData.password}
-                className="w-full rounded-2xl bg-indigo-600 px-4 py-3.5 text-sm font-semibold text-white shadow-[0_18px_40px_rgba(79,70,229,0.22)] transition hover:bg-indigo-500 disabled:cursor-not-allowed disabled:opacity-70"
-              >
-                {loading ? "Resetting..." : "Reset password"}
-              </button>
-            </form>
+            {error ? (
+              <p className="rounded-[8px] border border-[var(--color-accent-red)]/20 bg-[var(--color-accent-red)]/10 px-4 py-3 text-sm text-[var(--color-accent-red)]">{error}</p>
+            ) : null}
 
             <button
-              type="button"
-              onClick={() => setMode("signin")}
-              className="mt-4 text-sm text-slate-500 hover:text-indigo-600"
+              type="submit"
+              disabled={loading || !formData.email || verificationCode.length < 6 || !formData.password}
+              className="h-9 w-full rounded-[8px] bg-[var(--color-primary)] px-4 text-sm font-medium text-[var(--color-primary-on)] transition hover:bg-[var(--color-body)] disabled:cursor-not-allowed disabled:opacity-50"
             >
-              Back to sign in
+              {loading ? "Resetting..." : "Reset password"}
             </button>
-          </div>
-        </section>
-      </main>
+          </form>
+
+          <button
+            type="button"
+            onClick={() => setMode("signin")}
+            className="mt-4 text-sm text-[var(--color-charcoal)] transition hover:text-[var(--color-ink)]"
+          >
+            Back to sign in
+          </button>
+        </AuthCard>
+      </PageShell>
     );
   }
 
   if (mode === "password-reset") {
     return (
-      <main className="min-h-screen bg-linear-to-br from-slate-100 via-white to-indigo-100 p-4 sm:p-6">
-        <section className="mx-auto grid min-h-[calc(100vh-2rem)] max-w-6xl gap-6 rounded-4xl border border-white/70 bg-white/80 p-4 shadow-[0_30px_90px_rgba(15,23,42,0.08)] backdrop-blur-sm sm:min-h-[calc(100vh-3rem)] sm:grid-cols-[1.1fr_0.9fr] sm:p-6">
-          <AuthIllustration />
-
-          <div className="rounded-[2rem] bg-white p-6 text-center shadow-[0_30px_90px_rgba(15,23,42,0.12)] sm:p-8">
-            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 text-2xl text-emerald-600">
-              ✓
-            </div>
-            <h1 className="text-xl font-semibold text-slate-900">Password reset!</h1>
-            <p className="mt-2 text-sm text-slate-500">{status}</p>
-            <button
-              type="button"
-              onClick={() => setMode("signin")}
-              className="mt-6 w-full rounded-2xl bg-indigo-600 px-4 py-3.5 text-sm font-semibold text-white transition hover:bg-indigo-500"
-            >
-              Go to sign in
-            </button>
+      <PageShell>
+        <AuthCard compact>
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-[var(--color-accent-green)]/10 text-lg text-[var(--color-accent-green)]">
+            ✓
           </div>
-        </section>
-      </main>
+          <h1 className="text-xl font-medium text-[var(--color-ink)]" style={{ fontFamily: "var(--font-display)" }}>
+            Password reset!
+          </h1>
+          <p className="mt-2 text-sm text-[var(--color-body)]">{status}</p>
+          <button
+            type="button"
+            onClick={() => setMode("signin")}
+            className="mt-6 h-9 w-full rounded-[8px] bg-[var(--color-primary)] px-4 text-sm font-medium text-[var(--color-primary-on)] transition hover:bg-[var(--color-body)]"
+          >
+            Go to sign in
+          </button>
+        </AuthCard>
+      </PageShell>
     );
   }
 
   return (
-    <main className="min-h-screen bg-linear-to-br from-slate-100 via-white to-indigo-100 p-4 sm:p-6">
-      <section className="mx-auto grid min-h-[calc(100vh-2rem)] max-w-6xl gap-6 rounded-4xl border border-white/70 bg-white/80 p-4 shadow-[0_30px_90px_rgba(15,23,42,0.08)] backdrop-blur-sm sm:min-h-[calc(100vh-3rem)] sm:grid-cols-[1.1fr_0.9fr] sm:p-6">
-        <AuthIllustration />
-
-        <AuthForm
-          mode={mode}
-          formData={formData}
-          onInputChange={onInputChange}
-          onSubmit={onSubmit}
-          onModeChange={setMode}
-          loading={loading}
-          error={error}
-          status={status}
-        />
-      </section>
-    </main>
+    <PageShell>
+      <AuthForm
+        mode={mode}
+        formData={formData}
+        onInputChange={onInputChange}
+        onSubmit={onSubmit}
+        onModeChange={setMode}
+        loading={loading}
+        error={error}
+        status={status}
+      />
+    </PageShell>
   );
 }

@@ -11,29 +11,32 @@ export default function AuthForm({
   const isSignup = mode === "signup";
 
   return (
-    <div className="rounded-[2rem] bg-white p-6 shadow-[0_30px_90px_rgba(15,23,42,0.12)] sm:p-8">
-      <div className="mb-8 flex items-center justify-between gap-4">
-        <div>
-          <div className="mb-3 inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-indigo-100 text-indigo-600 shadow-sm">
-            <span className="text-xl font-bold">◆</span>
-          </div>
-          <h1 className="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
-            {isSignup ? "Create your account" : "Welcome back"}
-          </h1>
-          <p className="mt-2 text-sm text-slate-500">
-            {isSignup
-              ? "Sign up to get started with your MERN app."
-              : "Sign in to continue to your dashboard."}
-          </p>
-        </div>
+    <div className="rounded-[12px] border border-[var(--color-hairline-strong)] bg-[var(--color-surface-card)] p-8">
+      <div className="mb-2 inline-flex rounded-full border border-[var(--color-hairline)] bg-[var(--color-surface-elevated)] px-3 py-1 text-xs text-[var(--color-charcoal)]">
+        {isSignup ? "Get started" : "Welcome back"}
       </div>
 
-      <div className="mb-6 grid grid-cols-2 gap-2 rounded-2xl bg-slate-100 p-1">
+      <h1
+        className="mt-4 text-[clamp(2rem,5vw,2.5rem)] font-medium leading-none tracking-tight text-[var(--color-ink)]"
+        style={{ fontFamily: "var(--font-display)" }}
+      >
+        {isSignup ? "Create your account" : "Sign in"}
+      </h1>
+
+      <p className="mt-2 text-sm text-[var(--color-body)]">
+        {isSignup
+          ? "Enter your details to get started."
+          : "Enter your credentials to continue."}
+      </p>
+
+      <div className="mb-6 mt-6 flex gap-1 rounded-[8px] bg-[var(--color-surface-elevated)] p-1">
         <button
           type="button"
           onClick={() => onModeChange("signin")}
-          className={`rounded-xl px-4 py-2.5 text-sm font-medium transition ${
-            !isSignup ? "bg-white text-slate-900 shadow-sm" : "text-slate-500"
+          className={`flex-1 rounded-[6px] px-4 py-2 text-sm font-medium transition ${
+            !isSignup
+              ? "bg-[var(--color-surface-card)] text-[var(--color-ink)]"
+              : "text-[var(--color-charcoal)]"
           }`}
         >
           Sign in
@@ -41,8 +44,10 @@ export default function AuthForm({
         <button
           type="button"
           onClick={() => onModeChange("signup")}
-          className={`rounded-xl px-4 py-2.5 text-sm font-medium transition ${
-            isSignup ? "bg-white text-slate-900 shadow-sm" : "text-slate-500"
+          className={`flex-1 rounded-[6px] px-4 py-2 text-sm font-medium transition ${
+            isSignup
+              ? "bg-[var(--color-surface-card)] text-[var(--color-ink)]"
+              : "text-[var(--color-charcoal)]"
           }`}
         >
           Sign up
@@ -50,13 +55,13 @@ export default function AuthForm({
       </div>
 
       {status ? (
-        <p className="mb-4 rounded-2xl bg-slate-50 px-4 py-3 text-sm text-slate-600">
+        <p className="mb-4 rounded-[8px] bg-[var(--color-surface-elevated)] px-4 py-3 text-sm text-[var(--color-charcoal)]">
           {status}
         </p>
       ) : null}
 
       {error ? (
-        <p className="mb-4 rounded-2xl border border-rose-100 bg-rose-50 px-4 py-3 text-sm text-rose-600">
+        <p className="mb-4 rounded-[8px] border border-[var(--color-accent-red)]/20 bg-[var(--color-accent-red)]/10 px-4 py-3 text-sm text-[var(--color-accent-red)]">
           {error}
         </p>
       ) : null}
@@ -64,7 +69,7 @@ export default function AuthForm({
       <form onSubmit={onSubmit} className="space-y-4">
         {isSignup && (
           <div>
-            <label className="mb-2 block text-sm font-medium text-slate-700">
+            <label className="mb-1.5 block text-sm font-medium text-[var(--color-charcoal)]">
               Username
             </label>
             <input
@@ -73,14 +78,14 @@ export default function AuthForm({
               placeholder="john doe"
               value={formData.name}
               onChange={onInputChange}
-              className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-300 focus:bg-white"
+              className="h-10 w-full rounded-[8px] border border-[var(--color-hairline-strong)] bg-[var(--color-surface-card)] px-3.5 py-2.5 text-sm text-[var(--color-ink)] outline-none transition placeholder:text-[var(--color-stone)] focus:border-[var(--color-ink)]"
               required
             />
           </div>
         )}
 
         <div>
-          <label className="mb-2 block text-sm font-medium text-slate-700">
+          <label className="mb-1.5 block text-sm font-medium text-[var(--color-charcoal)]">
             Email
           </label>
           <input
@@ -89,13 +94,13 @@ export default function AuthForm({
             placeholder="john.doe@gmail.com"
             value={formData.email}
             onChange={onInputChange}
-            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-300 focus:bg-white"
+            className="h-10 w-full rounded-[8px] border border-[var(--color-hairline-strong)] bg-[var(--color-surface-card)] px-3.5 py-2.5 text-sm text-[var(--color-ink)] outline-none transition placeholder:text-[var(--color-stone)] focus:border-[var(--color-ink)]"
             required
           />
         </div>
 
         <div>
-          <label className="mb-2 block text-sm font-medium text-slate-700">
+          <label className="mb-1.5 block text-sm font-medium text-[var(--color-charcoal)]">
             Password
           </label>
           <input
@@ -104,21 +109,21 @@ export default function AuthForm({
             placeholder="••••••••"
             value={formData.password}
             onChange={onInputChange}
-            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-300 focus:bg-white"
+            className="h-10 w-full rounded-[8px] border border-[var(--color-hairline-strong)] bg-[var(--color-surface-card)] px-3.5 py-2.5 text-sm text-[var(--color-ink)] outline-none transition placeholder:text-[var(--color-stone)] focus:border-[var(--color-ink)]"
             required
             minLength={6}
           />
         </div>
 
         {isSignup && (
-          <label className="flex items-start gap-3 text-sm text-slate-500">
+          <label className="flex items-start gap-3 text-sm text-[var(--color-charcoal)]">
             <input
               type="checkbox"
-              className="mt-1 h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+              className="mt-0.5 h-4 w-4 rounded border-[var(--color-hairline-strong)] bg-[var(--color-surface-card)] text-[var(--color-ink)]"
               required
             />
             <span>
-              I agree to the privacy policy & terms for this demo auth flow.
+              I agree to the privacy policy & terms.
             </span>
           </label>
         )}
@@ -126,7 +131,7 @@ export default function AuthForm({
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-2xl bg-indigo-600 px-4 py-3.5 text-sm font-semibold text-white shadow-[0_18px_40px_rgba(79,70,229,0.22)] transition hover:bg-indigo-500 disabled:cursor-not-allowed disabled:opacity-70"
+          className="h-9 w-full rounded-[8px] bg-[var(--color-primary)] px-4 text-sm font-medium text-[var(--color-primary-on)] transition hover:bg-[var(--color-body)] disabled:cursor-not-allowed disabled:opacity-50"
         >
           {loading ? "Please wait..." : isSignup ? "Sign up" : "Sign in"}
         </button>
@@ -135,19 +140,19 @@ export default function AuthForm({
           <button
             type="button"
             onClick={() => onModeChange("forgot-password")}
-            className="mt-2 w-full text-center text-sm text-slate-500 hover:text-indigo-600"
+            className="mt-1 w-full text-center text-sm text-[var(--color-charcoal)] transition hover:text-[var(--color-link)]"
           >
             Forgot password?
           </button>
         )}
       </form>
 
-      <div className="mt-6 text-center text-sm text-slate-500">
+      <div className="mt-6 text-center text-sm text-[var(--color-charcoal)]">
         {isSignup ? "Already have an account?" : "Need an account?"}{" "}
         <button
           type="button"
           onClick={() => onModeChange(isSignup ? "signin" : "signup")}
-          className="font-semibold text-indigo-600 hover:text-indigo-500"
+          className="font-medium text-[var(--color-link)] transition hover:text-[var(--color-accent-blue)]"
         >
           {isSignup ? "Sign in instead" : "Create one"}
         </button>

@@ -3,6 +3,6 @@ const { inboundWebhook } = require("../controllers/inboundController");
 
 const router = express.Router();
 
-router.post("/inbound-email", inboundWebhook);
+router.post("/", inboundWebhook);
 
 module.exports = router;
